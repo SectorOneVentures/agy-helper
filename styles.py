@@ -560,10 +560,16 @@ def get_scale_percentage() -> str:
 def get_current_theme() -> str:
     return "light"
 
-def apply_theme(scale: float = 1.0):
+def apply_theme(scale_or_theme = 1.0):
     global _current_provider, _current_theme, _current_scale
     _current_theme = "light"
-    _current_scale = scale
+    if isinstance(scale_or_theme, (int, float)):
+        _current_scale = float(scale_or_theme)
+    elif isinstance(scale_or_theme, str):
+        try:
+            _current_scale = float(scale_or_theme)
+        except ValueError:
+            pass  # Theme name string like "light" passed, maintain current scale
 
     settings = Gtk.Settings.get_default()
     if settings:
