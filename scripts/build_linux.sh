@@ -10,6 +10,6 @@ if ! command -v pyinstaller &> /dev/null; then
 fi
 
 # Build standalone binary
-pyinstaller --clean packaging/agy_helper.spec
+pyinstaller --clean agy_helper.spec
 
 echo "Build complete! Linux standalone binary is at dist/AgyHelper"

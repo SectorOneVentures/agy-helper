@@ -1,0 +1,172 @@
+name: Build & Package Multi-Platform Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  # -------------------------------------------------------------
+  # 1. LINUX BUILD (Standalone Binary & Snap)
+  # -------------------------------------------------------------
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install System Dependencies (GTK3)
+        run: |
+          sudo apt update
+          sudo apt install -y python3-gi python3-gi-cairo gir1.2-gtk-3.0 libgirepository1.0-dev
+
+      - name: Install Python Dependencies & PyInstaller
+        run: |
+          pip install --upgrade pip
+          pip install pyinstaller
+
+      - name: Build Linux Standalone Binary
+        run: |
+          pyinstaller --clean agy_helper.spec
+
+      - name: Archive Linux Binary
+        run: |
+          cd dist
+          tar -czvf AgyHelper-Linux-x86_64.tar.gz AgyHelper
+          cd ..
+
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AgyHelper-Linux-x86_64
+          path: dist/AgyHelper-Linux-x86_64.tar.gz
+
+  # -------------------------------------------------------------
+  # 2. WINDOWS BUILD (.exe)
+  # -------------------------------------------------------------
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install PyInstaller
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyinstaller
+
+      - name: Build Windows Executable (.exe)
+        shell: cmd
+        run: |
+          pyinstaller --clean agy_helper.spec
+
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AgyHelper-Windows
+          path: dist/AgyHelper.exe
+
+  # -------------------------------------------------------------
+  # 3. macOS BUILD (.app & .dmg)
+  # -------------------------------------------------------------
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install pyinstaller
+          brew install create-dmg || true
+
+      - name: Build macOS App Bundle
+        run: |
+          pyinstaller --clean \
+            --windowed \
+            --name "AgyHelper" \
+            --icon "assets/icon.png" \
+            --add-data "assets:assets" \
+            main.py
+
+      - name: Package into DMG
+        run: |
+          if command -v create-dmg &> /dev/null; then
+            create-dmg \
+              --volname "Agy Helper" \
+              --window-pos 200 120 \
+              --window-size 600 400 \
+              --icon-size 100 \
+              --icon "AgyHelper.app" 175 190 \
+              --app-drop-link 425 190 \
+              "dist/AgyHelper-macOS.dmg" \
+              "dist/AgyHelper.app" || true
+          fi
+          if [ ! -f "dist/AgyHelper-macOS.dmg" ]; then
+            hdiutil create -volname "AgyHelper" -srcfolder "dist/AgyHelper.app" -ov -format UDZO "dist/AgyHelper-macOS.dmg"
+          fi
+
+      - name: Upload macOS Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AgyHelper-macOS-DMG
+          path: dist/AgyHelper-macOS.dmg
+
+  # -------------------------------------------------------------
+  # 4. CREATE GITHUB RELEASE (On Tag)
+  # -------------------------------------------------------------
+  release:
+    needs: [build-linux, build-windows, build-macos]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Linux Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: AgyHelper-Linux-x86_64
+          path: release/
+
+      - name: Download Windows Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: AgyHelper-Windows
+          path: release/
+
+      - name: Download macOS Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: AgyHelper-macOS-DMG
+          path: release/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/AgyHelper-Linux-x86_64.tar.gz
+            release/AgyHelper.exe
+            release/AgyHelper-macOS.dmg
+          draft: false
+          prerelease: false
+          generate_release_notes: true
