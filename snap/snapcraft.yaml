@@ -1,0 +1,44 @@
+name: agy-helper
+base: core22
+version: '1.0.0'
+summary: Agy Desktop Companion & 1-Click IT Helper
+description: |
+  A friendly, accessible desktop AI companion and 1-click IT troubleshooter
+  for everyday computer users, families, and seniors. Powered by Google AGY.
+
+grade: stable
+confinement: strict
+
+apps:
+  agy-helper:
+    command: bin/python3 $SNAP/main.py --open-window
+    extensions: [gnome]
+    plugs:
+      - home
+      - network
+      - network-bind
+      - desktop
+      - desktop-legacy
+      - x11
+      - unity7
+      - opengl
+      - audio-playback
+
+parts:
+  agy-helper:
+    plugin: dump
+    source: .
+    stage-packages:
+      - python3
+      - python3-gi
+      - python3-gi-cairo
+      - gir1.2-gtk-3.0
+    stage:
+      - main.py
+      - agy_client.py
+      - assistant_window.py
+      - companion_widget.py
+      - safety_engine.py
+      - styles.py
+      - system_tools.py
+      - assets/*
