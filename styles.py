@@ -507,65 +507,62 @@ button.suggestion-chip:hover,
 }}
 
 /* ========================================================= */
-/* SCAM HELP TAB STYLES                                      */
+/* ========================================================= */
+/* SCAM HELP TAB STYLES - Harmonious, Clean iOS Light Design */
 /* ========================================================= */
 .scam-banner {{
-    background-color: #EFF6FF;
-    border: 1.5px solid #93C5FD;
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
     border-radius: 16px;
-    padding: 16px;
+    padding: 18px 20px;
     margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }}
 
 .scam-card {{
     background-color: #FFFFFF;
     border-radius: 16px;
     border: 1px solid #E2E8F0;
-    padding: 16px;
+    padding: 18px 20px;
     margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }}
 
-.scam-danger-box {{
-    background-color: #FEF2F2;
-    border: 1px solid #FECACA;
-    border-radius: 10px;
-    padding: 8px 12px;
-    color: #991B1B;
-    font-size: {f_sm}px;
-}}
-
-.scam-safe-box {{
-    background-color: #F0FDF4;
-    border: 1px solid #BBF7D0;
-    border-radius: 10px;
-    padding: 8px 12px;
-    color: #166534;
-    font-size: {f_sm}px;
+.scam-scenario-row {{
+    background-color: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
 }}
 
 button.btn-emergency,
 .btn-emergency {{
     background-image: none;
-    background-color: #DC2626;
-    color: #FFFFFF;
+    background-color: #FEF2F2;
+    color: #B91C1C;
     font-weight: bold;
     font-size: {f_base}px;
     border-radius: 12px;
-    border: none;
+    border: 1.5px solid #FCA5A5;
     min-height: {btn_h}px;
     padding: {btn_pad_v}px {btn_pad_h}px;
-    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.35);
+    box-shadow: none;
 }}
 
 button.btn-emergency:hover,
 .btn-emergency:hover {{
     background-image: none;
-    background-color: #EF4444;
+    background-color: #FEE2E2;
+    border-color: #F87171;
+    color: #991B1B;
 }}
 
 button.btn-emergency label,
-.btn-emergency label {{
-    color: #FFFFFF;
+.btn-emergency label,
+button.btn-emergency:backdrop label,
+.btn-emergency:backdrop label {{
+    color: #B91C1C;
     font-weight: bold;
 }}
 """

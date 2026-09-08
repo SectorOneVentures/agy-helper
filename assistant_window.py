@@ -1186,60 +1186,63 @@ class AssistantWindow(Gtk.Window):
         vbox.set_margin_top(16)
         vbox.set_margin_bottom(16)
 
-        # 1. Top Reassurance Banner
-        banner = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        # 1. Top Safety Header Banner
+        banner = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         banner.get_style_context().add_class("scam-banner")
 
-        lbl_b_title = Gtk.Label(label="🛡️ Scam & Fraud Protection Helper")
+        lbl_b_title = Gtk.Label()
+        lbl_b_title.set_markup("<b>🛡️ Security &amp; Scam Protection</b>")
         lbl_b_title.get_style_context().add_class("header-title")
         lbl_b_title.set_xalign(0)
         banner.pack_start(lbl_b_title, False, False, 0)
 
         lbl_b_desc = Gtk.Label(
-            label="Scammers use fake warnings, loud sirens, and urgency to trick people into giving away money or remote computer access. "
-                  "Remember: real tech companies will NEVER lock your screen or ask for gift cards. You are completely safe here."
+            label="Practical, calm guidance to help you recognize deceptive messages, protect your personal accounts, "
+                  "and navigate technology with peace of mind. Remember: legitimate companies will never lock your computer "
+                  "or ask for payments via gift cards."
         )
         lbl_b_desc.set_line_wrap(True)
         lbl_b_desc.set_xalign(0)
+        lbl_b_desc.get_style_context().add_class("header-subtitle")
         banner.pack_start(lbl_b_desc, False, False, 0)
 
         # Quick Action Buttons Row
-        btn_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        btn_box.set_margin_top(6)
+        btn_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        btn_box.set_margin_top(4)
 
-        btn_ask_scam = Gtk.Button(label="🔍 Ask Agy to Check a Suspicious Message")
+        btn_ask_scam = Gtk.Button(label="🔍 Ask Agy to Review a Message")
         btn_ask_scam.get_style_context().add_class("ios-btn-primary")
         btn_ask_scam.connect("clicked", lambda b: self._start_scam_check())
         btn_box.pack_start(btn_ask_scam, False, False, 0)
 
-        btn_kill_browsers = Gtk.Button(label="🛑 Emergency: Close All Web Browsers")
+        btn_kill_browsers = Gtk.Button(label="🛑 Close Active Browsers")
         btn_kill_browsers.get_style_context().add_class("btn-emergency")
-        btn_kill_browsers.set_tooltip_text("Use this if a scary fake virus webpage won't let you close the window.")
+        btn_kill_browsers.set_tooltip_text("Closes open browser windows if a stubborn webpage won't let you close the window.")
         btn_kill_browsers.connect("clicked", lambda b: self._emergency_close_browsers())
         btn_box.pack_start(btn_kill_browsers, False, False, 0)
 
         banner.pack_start(btn_box, False, False, 0)
         vbox.pack_start(banner, False, False, 0)
 
-        # 2. Golden Safety Rules Card
+        # 2. Key Principles Card
         rules_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         rules_card.get_style_context().add_class("ios-card")
 
-        lbl_r_head = Gtk.Label(label="⭐ The 3 Golden Rules To Never Get Scammed")
-        lbl_r_head.get_style_context().add_class("header-title")
+        lbl_r_head = Gtk.Label()
+        lbl_r_head.set_markup("<b>Essential Safety Principles</b>")
         lbl_r_head.set_xalign(0)
         rules_card.pack_start(lbl_r_head, False, False, 0)
 
         rules = [
-            ("1. No Real Company Puts a Phone Number on Your Screen",
-             "If your screen flashes red saying 'Call Microsoft at 1-800-XXX-XXXX', it is 100% a fake website! Real error messages never ask you to phone an 800 number."),
-            ("2. Never Allow Anyone Who Called You to Control Your Computer",
-             "If someone calls claiming to be from Amazon, your bank, or tech support asking you to install AnyDesk, TeamViewer, or QuickAssist, HANG UP. They want to get into your online banking."),
-            ("3. Gift Cards = 100% Scam (Always)",
-             "No legitimate company, bank, police department, or the IRS ever accepts Target, Apple, Google Play, or Walmart gift cards as payment. Anyone asking for gift cards is a scammer.")
+            ("1. Legitimate error alerts never display phone numbers",
+             "If your web browser displays an alert asking you to call an 800 phone number, it is simply an advertisement designed to look like an error. Real operating system alerts never ask you to phone anyone."),
+            ("2. Never grant remote computer access to incoming callers",
+             "If someone calls unexpectedly claiming to represent Amazon, Microsoft, or your bank and requests that you install screen-sharing software, hang up immediately. Legitimate institutions do not request remote control."),
+            ("3. Retail gift cards are never used for official payments",
+             "No bank, utility company, or government agency will ever accept gift cards (such as Target, Apple, or Google Play) as payment. Any request for gift cards is always fraudulent.")
         ]
         for title, detail in rules:
-            r_row = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+            r_row = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
             r_row.get_style_context().add_class("ios-card-inner")
             lt = Gtk.Label(label=f"<b>{title}</b>")
             lt.set_use_markup(True)
@@ -1254,82 +1257,85 @@ class AssistantWindow(Gtk.Window):
 
         vbox.pack_start(rules_card, False, False, 0)
 
-        # 3. Common Scam Tactics Card
-        tactics_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        tactics_card.get_style_context().add_class("ios-card")
+        # 3. Common Scenarios & Safe Responses (Clean, unified card layout without red/green boxes)
+        scenarios_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        scenarios_card.get_style_context().add_class("ios-card")
 
-        lbl_t_head = Gtk.Label(label="🚨 Common Scams & What To Do")
-        lbl_t_head.get_style_context().add_class("header-title")
-        lbl_t_head.set_xalign(0)
-        tactics_card.pack_start(lbl_t_head, False, False, 0)
+        lbl_s_head = Gtk.Label()
+        lbl_s_head.set_markup("<b>Common Situations &amp; Recommended Responses</b>")
+        lbl_s_head.set_xalign(0)
+        scenarios_card.pack_start(lbl_s_head, False, False, 0)
 
-        tactics = [
+        lbl_s_sub = Gtk.Label(
+            label="Everyday situations you might encounter online or by phone, with straightforward steps on how to handle them calmly."
+        )
+        lbl_s_sub.set_line_wrap(True)
+        lbl_s_sub.set_xalign(0)
+        lbl_s_sub.get_style_context().add_class("header-subtitle")
+        scenarios_card.pack_start(lbl_s_sub, False, False, 0)
+
+        scenarios = [
             {
-                "name": "Fake Tech Support / Virus Alarm Popup",
-                "danger": "A loud siren plays and a webpage says your computer is infected with 5 viruses.",
-                "safe": "It's just an annoying webpage! Click 'Emergency Close Browsers' above or press Alt+F4. Your files are completely safe."
+                "title": "🖥️ Full-Screen \"Virus Detected\" or Alarm Warnings",
+                "what": "A website suddenly opens full screen, plays an alarm, and claims your computer is locked or infected.",
+                "response": "Don't panic. It is just an ordinary webpage trying to frighten you. Close the browser tab or click 'Close Active Browsers' above. Your files and computer are completely safe."
             },
             {
-                "name": "The Fake USPS / Delivery Fee Text Message",
-                "danger": "A text message claims 'Package cannot be delivered, click here to pay $0.30 redelivery fee'.",
-                "safe": "Delete the text immediately! The link leads to a fake clone site designed to steal your debit card."
+                "title": "📦 Unsolicited Package or Delivery Fee Messages",
+                "what": "A text message or email claims an urgent package cannot be delivered until you pay a tiny fee (such as $0.30) through a link.",
+                "response": "Delete the message. Legitimate postal carriers do not hold deliveries for tiny online fees. Entering card details on these links compromises your payment card."
             },
             {
-                "name": "Bank Fraud Alert / Account Frozen Call",
-                "danger": "A caller claims your bank account has a suspicious $1,500 wire and asks for your password or PIN.",
-                "safe": "Hang up! Never give PINs or passwords. Look at the back of your physical bank card and call that official number yourself."
+                "title": "🏦 Urgent Calls Regarding \"Suspicious Bank Transfers\"",
+                "what": "A caller claims your bank account has a fraudulent charge and instructs you to verify your PIN or transfer money to a 'secure account'.",
+                "response": "Hang up right away. Banks never ask for your PIN or online password over the phone. Look at the back of your physical bank card and call that customer service number directly."
             },
             {
-                "name": "Family Member Emergency Impersonation",
-                "danger": "A caller sounds like a grandchild claiming they are in an accident or jail and need money sent right now.",
-                "safe": "Hang up and call that family member or their parents directly on their known phone number before sending any money."
+                "title": "👥 Urgent \"Emergency\" Calls from Family or Relatives",
+                "what": "A caller sounds distressed (or uses an AI voice imitation) claiming a relative was in an accident or detained and needs immediate wire or app payment.",
+                "response": "Take a breath and pause. Hang up and call that family member or their parents directly on their known phone number before taking any financial action."
             }
         ]
 
-        for t in tactics:
-            t_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-            t_box.get_style_context().add_class("ios-card-inner")
+        for s in scenarios:
+            s_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+            s_box.get_style_context().add_class("scam-scenario-row")
 
-            t_name = Gtk.Label(label=f"<b>{t['name']}</b>")
-            t_name.set_use_markup(True)
-            t_name.set_xalign(0)
-            t_box.pack_start(t_name, False, False, 0)
+            st_lbl = Gtk.Label(label=f"<b>{s['title']}</b>")
+            st_lbl.set_use_markup(True)
+            st_lbl.set_xalign(0)
+            s_box.pack_start(st_lbl, False, False, 0)
 
-            d_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
-            d_box.get_style_context().add_class("scam-danger-box")
-            ld = Gtk.Label(label=f"⚠️ <b>What Scammers Do:</b> {t['danger']}")
-            ld.set_use_markup(True)
-            ld.set_line_wrap(True)
-            ld.set_xalign(0)
-            d_box.pack_start(ld, False, False, 0)
-            t_box.pack_start(d_box, False, False, 0)
+            row_what = Gtk.Label(label=f"• <b>What occurs:</b> {s['what']}")
+            row_what.set_use_markup(True)
+            row_what.set_line_wrap(True)
+            row_what.set_xalign(0)
+            row_what.get_style_context().add_class("header-subtitle")
+            s_box.pack_start(row_what, False, False, 0)
 
-            s_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
-            s_box.get_style_context().add_class("scam-safe-box")
-            ls = Gtk.Label(label=f"✅ <b>What You Should Do:</b> {t['safe']}")
-            ls.set_use_markup(True)
-            ls.set_line_wrap(True)
-            ls.set_xalign(0)
-            s_box.pack_start(ls, False, False, 0)
-            t_box.pack_start(s_box, False, False, 0)
+            row_resp = Gtk.Label(label=f"• <b>Safe response:</b> {s['response']}")
+            row_resp.set_use_markup(True)
+            row_resp.set_line_wrap(True)
+            row_resp.set_xalign(0)
+            s_box.pack_start(row_resp, False, False, 0)
 
-            tactics_card.pack_start(t_box, False, False, 0)
+            scenarios_card.pack_start(s_box, False, False, 0)
 
-        vbox.pack_start(tactics_card, False, False, 0)
+        vbox.pack_start(scenarios_card, False, False, 0)
 
-        # 4. Privacy Guarantee Card
+        # 4. Privacy & Reporting Card
         priv_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         priv_card.get_style_context().add_class("ios-card")
 
-        lbl_priv_title = Gtk.Label(label="🔒 Your Privacy is 100% Protected")
-        lbl_priv_title.get_style_context().add_class("header-title")
+        lbl_priv_title = Gtk.Label(label="<b>🔒 Privacy &amp; Trust Assurance</b>")
+        lbl_priv_title.set_use_markup(True)
         lbl_priv_title.set_xalign(0)
         priv_card.pack_start(lbl_priv_title, False, False, 0)
 
         row_priv = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
         lbl_priv_desc = Gtk.Label(
-            label="Agy Helper never sells or shares your personal information, messages, or files with third parties. "
-                  "Everything runs locally or via secure, encrypted Google Gemini AI processing."
+            label="Agy Helper never sells or shares your personal messages, inquiries, or files with third-party advertisers. "
+                  "If you encounter a suspected scam, report it to the FTC at reportfraud.ftc.gov."
         )
         lbl_priv_desc.set_line_wrap(True)
         lbl_priv_desc.set_xalign(0)
