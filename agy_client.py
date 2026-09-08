@@ -72,6 +72,54 @@ def check_agy_connection() -> tuple:
     except Exception as e:
         return False, f"Connection test failed: {e}"
 
+def auto_connect_agy() -> tuple:
+    """
+    Attempts to automatically find, configure, and connect to Google AGY without requiring the user
+    to understand terminals, directories, or technical configurations.
+    Returns (is_connected, message).
+    """
+    conn, msg = check_agy_connection()
+    if conn:
+        return True, "Google AI is connected and ready to assist you!"
+
+    agy_path = find_agy_binary()
+    if not agy_path:
+        search_dirs = [
+            os.path.expanduser("~/.gemini"),
+            os.path.expanduser("~/.config/Antigravity"),
+            os.path.expanduser("~/.local/share"),
+            "/opt",
+            "/snap"
+        ]
+        for sdir in search_dirs:
+            if os.path.isdir(sdir):
+                for root, dirs, files in os.walk(sdir):
+                    if "agy" in files:
+                        p = os.path.join(root, "agy")
+                        if os.access(p, os.X_OK):
+                            agy_path = p
+                            break
+                    if agy_path:
+                        break
+            if agy_path:
+                break
+
+    if agy_path and os.path.exists(agy_path):
+        target_dir = os.path.expanduser("~/.local/bin")
+        try:
+            os.makedirs(target_dir, exist_ok=True)
+            target_sym = os.path.join(target_dir, "agy")
+            if not os.path.exists(target_sym):
+                os.symlink(agy_path, target_sym)
+        except Exception:
+            pass
+
+    conn, msg = check_agy_connection()
+    if conn:
+        return True, "Successfully connected to Google AI!"
+
+    return False, "Google Antigravity was not found on this computer yet. Please click 'Open Free Download Page' below."
+
 def find_agy_binary() -> Optional[str]:
     """Finds the agy CLI binary across system and user-local directories."""
     # 1. Check standard PATH

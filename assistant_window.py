@@ -12,8 +12,9 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('GdkPixbuf', '2.0')
 from gi.repository import Gtk, Gdk, GLib, GdkPixbuf, Pango
 
+import webbrowser
 from safety_engine import check_command_safety, get_protected_paths_summary
-from agy_client import AgyClient, DEFAULT_MODEL, DEFAULT_EFFORT, check_agy_connection
+from agy_client import AgyClient, DEFAULT_MODEL, DEFAULT_EFFORT, check_agy_connection, auto_connect_agy
 from styles import apply_theme, zoom_in, zoom_out, get_scale_percentage
 from system_tools import (
     APP_CATALOG,
@@ -776,22 +777,22 @@ class AssistantWindow(Gtk.Window):
             if is_conn:
                 ctx.remove_class("status-pill-red")
                 ctx.add_class("status-pill-green")
-                self.btn_conn_status.set_label("🟢 AGY Connected")
-                self.btn_conn_status.set_tooltip_text("Connected to Google AGY AI engine. Click to view status.")
+                self.btn_conn_status.set_label("🟢 AI Ready")
+                self.btn_conn_status.set_tooltip_text("Google AI assistant is connected and ready. Click to see details.")
             else:
                 ctx.remove_class("status-pill-green")
                 ctx.add_class("status-pill-red")
-                self.btn_conn_status.set_label("🔴 Setup AGY")
-                self.btn_conn_status.set_tooltip_text("Google AGY is disconnected. Click for easy step-by-step setup.")
+                self.btn_conn_status.set_label("🔴 Connect AI")
+                self.btn_conn_status.set_tooltip_text("Google AI assistant is not connected yet. Click for quick 1-click connection.")
 
     def _show_agy_troubleshooter_dialog(self):
-        """Displays a simple, step-by-step onboarding and troubleshooter modal for Google AGY."""
+        """Displays a warm, friendly, 100% non-technical setup and connection window."""
         dialog = Gtk.Dialog(
-            title="Google AGY Setup & Troubleshooter",
+            title="Google AI Assistant Connection",
             parent=self,
             flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT
         )
-        dialog.set_default_size(520, 440)
+        dialog.set_default_size(540, 480)
         content_area = dialog.get_content_area()
         content_area.set_spacing(14)
         content_area.set_margin_start(20)
@@ -799,85 +800,220 @@ class AssistantWindow(Gtk.Window):
         content_area.set_margin_top(18)
         content_area.set_margin_bottom(18)
 
-        is_connected, msg = check_agy_connection()
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        scroll.set_shadow_type(Gtk.ShadowType.NONE)
 
-        # Status Header
-        status_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-        lbl_status_icon = Gtk.Label()
-        lbl_status_icon.set_markup("<span font='24'>" + ("🟢" if is_connected else "🔴") + "</span>")
-        status_box.pack_start(lbl_status_icon, False, False, 0)
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
+        vbox.set_margin_start(4)
+        vbox.set_margin_end(8)
 
-        status_text_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
-        lbl_s_title = Gtk.Label()
-        lbl_s_title.set_markup("<b>Google AGY AI Status: " + ("Connected &amp; Ready" if is_connected else "Setup Required / Disconnected") + "</b>")
-        lbl_s_title.set_xalign(0)
-        lbl_s_sub = Gtk.Label(label=msg)
-        lbl_s_sub.get_style_context().add_class("header-subtitle")
-        lbl_s_sub.set_xalign(0)
-        status_text_box.pack_start(lbl_s_title, False, False, 0)
-        status_text_box.pack_start(lbl_s_sub, False, False, 0)
-        status_box.pack_start(status_text_box, True, True, 0)
-        content_area.pack_start(status_box, False, False, 0)
+        is_connected, _ = check_agy_connection()
 
-        # Step-by-Step Guide Card
-        guide_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        guide_box.get_style_context().add_class("ios-card")
+        # Top Status Card
+        status_card = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=14)
+        status_card.get_style_context().add_class("ios-card")
 
-        lbl_guide_title = Gtk.Label(label="<b>Simple Step-by-Step Guide to Connect:</b>")
-        lbl_guide_title.set_use_markup(True)
-        lbl_guide_title.set_xalign(0)
-        guide_box.pack_start(lbl_guide_title, False, False, 0)
+        lbl_icon = Gtk.Label()
+        lbl_icon.set_markup("<span font='30'>" + ("🟢" if is_connected else "🔴") + "</span>")
+        status_card.pack_start(lbl_icon, False, False, 0)
 
-        steps = [
-            ("Step 1: Download & Install AGY from Google",
-             "Google AGY is the free agentic AI engine that powers Agy Helper. It installs into ~/.local/bin/agy automatically when you install Antigravity."),
-            ("Step 2: Sign In or Set Gemini API Key",
-             "Run 'agy login' in your terminal or ensure your Google Antigravity account is signed in."),
-            ("Step 3: Test Connection",
-             "Click 'Test Connection' below. When the green light turns on, Agy Helper is fully ready to assist you!")
-        ]
+        txt_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
+        lbl_title = Gtk.Label()
+        lbl_title.get_style_context().add_class("header-title")
+        lbl_title.set_xalign(0)
 
-        for s_title, s_desc in steps:
-            s_row = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
-            st = Gtk.Label(label=f"<b>{s_title}</b>")
-            st.set_use_markup(True)
-            st.set_xalign(0)
-            sd = Gtk.Label(label=s_desc)
-            sd.set_line_wrap(True)
-            sd.set_xalign(0)
-            sd.get_style_context().add_class("header-subtitle")
-            s_row.pack_start(st, False, False, 0)
-            s_row.pack_start(sd, False, False, 0)
-            guide_box.pack_start(s_row, False, False, 0)
+        lbl_desc = Gtk.Label()
+        lbl_desc.set_line_wrap(True)
+        lbl_desc.set_xalign(0)
+        lbl_desc.get_style_context().add_class("header-subtitle")
 
-        content_area.pack_start(guide_box, True, True, 0)
+        if is_connected:
+            lbl_title.set_markup("<b>Everything is Working Perfectly! 🎉</b>")
+            lbl_desc.set_text("Google's helpful AI assistant is connected and ready. You don't need to do any setup at all!")
+        else:
+            lbl_title.set_markup("<b>Let's Connect Agy's Google Assistant</b>")
+            lbl_desc.set_text("Don't worry, your computer is safe! Agy just needs a quick 1-click connection to Google's assistant.")
 
-        # Action Buttons
+        txt_box.pack_start(lbl_title, False, False, 0)
+        txt_box.pack_start(lbl_desc, False, False, 0)
+        status_card.pack_start(txt_box, True, True, 0)
+        vbox.pack_start(status_card, False, False, 0)
+
+        # Body Container (dynamically renders for Connected vs Disconnected)
+        body_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+
+        def refresh_body(connected: bool):
+            for child in body_box.get_children():
+                body_box.remove(child)
+
+            if connected:
+                # Connected: Show friendly reassurance and capabilities
+                ready_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+                ready_card.get_style_context().add_class("ios-card")
+
+                lbl_r_head = Gtk.Label()
+                lbl_r_head.set_markup("<b>What You Can Do Right Now:</b>")
+                lbl_r_head.set_xalign(0)
+                ready_card.pack_start(lbl_r_head, False, False, 0)
+
+                tips = [
+                    ("💬 Ask Any Question", "Switch to the Ask Agy tab and type anything you need help with in plain English (e.g. 'Why is my internet slow?')."),
+                    ("⚡ Fix Common Glitches", "Click '1 Click Fixes' at the top to fix sound, speed up Wi-Fi, or clear storage with a single tap."),
+                    ("🛡️ Protect Against Scams", "Click 'Scam Help' to learn how to spot tricky fake popups, phone callers, or text messages.")
+                ]
+                for tip_title, tip_desc in tips:
+                    row = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+                    row.get_style_context().add_class("ios-card-inner")
+                    rt = Gtk.Label()
+                    rt.set_markup(f"<b>{tip_title}</b>")
+                    rt.set_xalign(0)
+                    rd = Gtk.Label(label=tip_desc)
+                    rd.set_line_wrap(True)
+                    rd.set_xalign(0)
+                    rd.get_style_context().add_class("header-subtitle")
+                    row.pack_start(rt, False, False, 0)
+                    row.pack_start(rd, False, False, 0)
+                    ready_card.pack_start(row, False, False, 0)
+
+                body_box.pack_start(ready_card, False, False, 0)
+
+                # Small Re-check row
+                recheck_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+                recheck_row.set_halign(Gtk.Align.START)
+                btn_recheck = Gtk.Button(label="🔄 Re-check Connection")
+                btn_recheck.get_style_context().add_class("ios-btn-secondary")
+                def on_recheck_click(b):
+                    conn, _ = check_agy_connection()
+                    self._update_connection_ui()
+                    if conn:
+                        btn_recheck.set_label("Verified Connected! ✓")
+                    else:
+                        lbl_icon.set_markup("<span font='30'>🔴</span>")
+                        lbl_title.set_markup("<b>Let's Connect Agy's Google Assistant</b>")
+                        lbl_desc.set_text("Assistant connection was lost. Click Connect Automatically below.")
+                        refresh_body(False)
+                btn_recheck.connect("clicked", on_recheck_click)
+                recheck_row.pack_start(btn_recheck, False, False, 0)
+                body_box.pack_start(recheck_row, False, False, 0)
+
+            else:
+                # Disconnected: Show 3 simple everyday options
+
+                # Step 1: Automatic 1-Click Setup
+                opt1_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+                opt1_card.get_style_context().add_class("ios-card")
+
+                opt1_head = Gtk.Label()
+                opt1_head.set_markup("<b>⚡ Option 1: Connect Automatically (Recommended)</b>")
+                opt1_head.set_xalign(0)
+                opt1_card.pack_start(opt1_head, False, False, 0)
+
+                opt1_sub = Gtk.Label(
+                    label="Click the blue button below. Agy will automatically search your computer, "
+                          "set up the connection, and test it for you. No technical steps required!"
+                )
+                opt1_sub.set_line_wrap(True)
+                opt1_sub.set_xalign(0)
+                opt1_sub.get_style_context().add_class("header-subtitle")
+                opt1_card.pack_start(opt1_sub, False, False, 0)
+
+                btn_auto_connect = Gtk.Button(label="⚡ Connect Automatically Now")
+                btn_auto_connect.get_style_context().add_class("ios-btn-primary")
+                btn_auto_connect.set_size_request(240, 40)
+
+                lbl_feedback = Gtk.Label(label="")
+                lbl_feedback.set_xalign(0)
+                lbl_feedback.get_style_context().add_class("header-subtitle")
+
+                def on_auto_connect_click(b):
+                    btn_auto_connect.set_sensitive(False)
+                    btn_auto_connect.set_label("Searching & Connecting...")
+                    lbl_feedback.set_text("Searching for Google AI on your computer...")
+
+                    def _run_bg():
+                        success, result_msg = auto_connect_agy()
+                        def _on_done():
+                            self._update_connection_ui()
+                            if success:
+                                lbl_icon.set_markup("<span font='30'>🟢</span>")
+                                lbl_title.set_markup("<b>Everything is Working Perfectly! 🎉</b>")
+                                lbl_desc.set_text("Google's helpful AI assistant is now connected and ready!")
+                                refresh_body(True)
+                            else:
+                                btn_auto_connect.set_sensitive(True)
+                                btn_auto_connect.set_label("⚡ Try Automatic Connect Again")
+                                lbl_feedback.set_text("Assistant was not found yet. Try Option 2 below to download it for free.")
+                        GLib.idle_add(_on_done)
+
+                    import threading
+                    threading.Thread(target=_run_bg, daemon=True).start()
+
+                btn_auto_connect.connect("clicked", on_auto_connect_click)
+                opt1_card.pack_start(btn_auto_connect, False, False, 0)
+                opt1_card.pack_start(lbl_feedback, False, False, 0)
+                body_box.pack_start(opt1_card, False, False, 0)
+
+                # Step 2: If Not Installed Yet - Free Download from Google
+                opt2_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+                opt2_card.get_style_context().add_class("ios-card")
+
+                opt2_head = Gtk.Label()
+                opt2_head.set_markup("<b>🌐 Option 2: Need Google Antigravity? (Free Download)</b>")
+                opt2_head.set_xalign(0)
+                opt2_card.pack_start(opt2_head, False, False, 0)
+
+                opt2_sub = Gtk.Label(
+                    label="If this is a new computer and Google Antigravity hasn't been downloaded yet, "
+                          "it is a 100% free download directly from Google."
+                )
+                opt2_sub.set_line_wrap(True)
+                opt2_sub.set_xalign(0)
+                opt2_sub.get_style_context().add_class("header-subtitle")
+                opt2_card.pack_start(opt2_sub, False, False, 0)
+
+                btn_dl = Gtk.Button(label="🌐 Open Free Google Download Page")
+                btn_dl.get_style_context().add_class("ios-btn-secondary")
+                btn_dl.set_size_request(260, 38)
+                def on_dl_click(b):
+                    try:
+                        webbrowser.open("https://antigravity.google")
+                    except Exception:
+                        pass
+                btn_dl.connect("clicked", on_dl_click)
+                opt2_card.pack_start(btn_dl, False, False, 0)
+                body_box.pack_start(opt2_card, False, False, 0)
+
+                # Step 3: Google Account Sign-In Reminder
+                opt3_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+                opt3_card.get_style_context().add_class("ios-card-inner")
+                opt3_title = Gtk.Label(label="<b>🔑 Option 3: Make Sure You're Signed In</b>")
+                opt3_title.set_use_markup(True)
+                opt3_title.set_xalign(0)
+                opt3_desc = Gtk.Label(
+                    label="When Google Antigravity opens, simply sign in with your normal Google/Gmail account. "
+                          "Once signed in, come back here and click 'Connect Automatically Now' above!"
+                )
+                opt3_desc.set_line_wrap(True)
+                opt3_desc.set_xalign(0)
+                opt3_desc.get_style_context().add_class("header-subtitle")
+                opt3_card.pack_start(opt3_title, False, False, 0)
+                opt3_card.pack_start(opt3_desc, False, False, 0)
+                body_box.pack_start(opt3_card, False, False, 0)
+
+            body_box.show_all()
+
+        refresh_body(is_connected)
+        vbox.pack_start(body_box, True, True, 0)
+        scroll.add(vbox)
+        content_area.pack_start(scroll, True, True, 0)
+
+        # Bottom Button Bar
         btn_area = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
         btn_area.set_halign(Gtk.Align.END)
 
-        btn_test = Gtk.Button(label="⚡ Test Connection Now")
-        btn_test.get_style_context().add_class("ios-btn-primary")
-
-        def on_test_click(b):
-            conn, m = check_agy_connection()
-            self._update_connection_ui()
-            if conn:
-                lbl_s_title.set_markup("<b>Google AGY AI Status: Connected &amp; Ready 🎉</b>")
-                lbl_s_sub.set_text("Successfully connected to Google AGY AI engine.")
-                lbl_status_icon.set_markup("<span font='24'>🟢</span>")
-                btn_test.set_label("Connected! ✓")
-                btn_test.set_sensitive(False)
-            else:
-                lbl_s_title.set_markup("<b>Google AGY AI Status: Disconnected</b>")
-                lbl_s_sub.set_text(m)
-                lbl_status_icon.set_markup("<span font='24'>🔴</span>")
-
-        btn_test.connect("clicked", on_test_click)
-        btn_area.pack_start(btn_test, False, False, 0)
-
-        btn_close = Gtk.Button(label="Close")
-        btn_close.get_style_context().add_class("ios-btn-secondary")
+        btn_close = Gtk.Button(label="🚀 Start Using Agy Now" if is_connected else "Close")
+        btn_close.get_style_context().add_class("ios-btn-primary")
         btn_close.connect("clicked", lambda b: dialog.destroy())
         btn_area.pack_start(btn_close, False, False, 0)
 
