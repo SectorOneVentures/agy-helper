@@ -627,23 +627,23 @@ class AssistantWindow(Gtk.Window):
     # TAB 3: Easy Software Installer & App Launcher
     # -------------------------------------------------------------
     def _get_app_icon_widget(self, app_info: dict) -> Gtk.Widget:
-        """Returns a high-quality rendered icon widget from bundled SVGs or system theme."""
+        """Returns a high-quality rendered icon widget from bundled official PNGs or system theme."""
         assets_apps_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "apps")
         app_id = app_info.get("id", "")
         icon_name = app_info.get("icon", "")
 
-        # 1. Check bundled SVGs in assets/apps/
+        # 1. Check bundled official PNG icons in assets/apps/
         for name in [app_id, icon_name]:
-            svg_path = os.path.join(assets_apps_dir, f"{name}.svg")
-            if os.path.exists(svg_path):
+            png_path = os.path.join(assets_apps_dir, f"{name}.png")
+            if os.path.exists(png_path):
                 try:
-                    pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(svg_path, 44, 44, True)
+                    pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(png_path, 48, 48, True)
                     if pix:
                         return Gtk.Image.new_from_pixbuf(pix)
                 except Exception:
                     pass
 
-        # 2. Check system IconTheme
+        # 2. Check system IconTheme for installed app icon
         theme = Gtk.IconTheme.get_default()
         if theme:
             if icon_name and theme.has_icon(icon_name):

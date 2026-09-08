@@ -17,7 +17,7 @@ Powered by Google AGY and Gemini AI, Agy Helper turns scary computer error messa
 - **👓 Senior Visibility Mode (Font Zoom `A-` / `A+`)**: Global font scaling (100%, 115%, 130%, 150%) so seniors and visually impaired users can comfortably read all content.
 - **🔒 Zero-Deletion Safety Engine**: Hardcoded safety barriers guarantee that no script or fix can ever delete or alter files in `~/Documents`, `~/Pictures`, or `~/Music`. All proposed commands are verified before execution.
 - **⚡ 1-Click IT Fixes**: Fix audio/sound hiccups, repair broken packages, free up disk space safely, restart Wi-Fi networking, and clear system caches with a single click.
-- **📦 1-Click App Installer**: Safe catalog of essential open-source applications (Chrome, Firefox, VLC, LibreOffice, GIMP, Spotify, Steam, VS Code, Audacity, Inkscape) with automatic detection of existing installations.
+- **📦 1-Click App Installer**: Curated catalog of essential everyday applications for families and seniors (Chrome, Firefox, Brave, VLC Media Player, LibreOffice, Spotify, Zoom, Thunderbird) with automatic detection of existing installations and authentic program icons.
 - **🟢 Google AGY Status & Troubleshooter**: Real-time status indicator showing whether Google AGY is connected, complete with an interactive step-by-step troubleshooter for new computers.
 - **🍏 Native iOS / macOS Light Aesthetic**: Modern clean design with backdrop stability ensuring readable white fonts on active tabs and buttons even when unfocused.
 
