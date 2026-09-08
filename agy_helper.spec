@@ -53,5 +53,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='assets/icon.png',
+    icon='assets/icon.ico' if sys.platform.startswith('win') else 'assets/icon.png',
 )
