@@ -196,10 +196,12 @@ class AssistantWindow(Gtk.Window):
         zoom_box.pack_start(btn_zoom_in, False, False, 0)
         right_box.pack_start(zoom_box, False, False, 0)
 
-        # Shield badge
-        lbl_shield = Gtk.Label(label="🛡️ Files Safe")
-        lbl_shield.get_style_context().add_class("shield-pill-green")
-        right_box.pack_start(lbl_shield, False, False, 0)
+        # Privacy Statement button
+        btn_privacy = Gtk.Button(label="🔒 Privacy")
+        btn_privacy.get_style_context().add_class("privacy-pill")
+        btn_privacy.set_tooltip_text("Open Privacy Statement: No 3rd-party sharing & Google Gemini details")
+        btn_privacy.connect("clicked", lambda b: self._show_privacy_dialog())
+        right_box.pack_start(btn_privacy, False, False, 0)
 
         # Model badge
         lbl_model = Gtk.Label(label="⚡ Gemini 3.7 Flash")
@@ -807,7 +809,7 @@ class AssistantWindow(Gtk.Window):
 
         status_text_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
         lbl_s_title = Gtk.Label()
-        lbl_s_title.set_markup("<b>Google AGY AI Status: " + ("Connected & Ready" if is_connected else "Setup Required / Disconnected") + "</b>")
+        lbl_s_title.set_markup("<b>Google AGY AI Status: " + ("Connected &amp; Ready" if is_connected else "Setup Required / Disconnected") + "</b>")
         lbl_s_title.set_xalign(0)
         lbl_s_sub = Gtk.Label(label=msg)
         lbl_s_sub.get_style_context().add_class("header-subtitle")
@@ -861,7 +863,7 @@ class AssistantWindow(Gtk.Window):
             conn, m = check_agy_connection()
             self._update_connection_ui()
             if conn:
-                lbl_s_title.set_markup("<b>Google AGY AI Status: Connected & Ready 🎉</b>")
+                lbl_s_title.set_markup("<b>Google AGY AI Status: Connected &amp; Ready 🎉</b>")
                 lbl_s_sub.set_text("Successfully connected to Google AGY AI engine.")
                 lbl_status_icon.set_markup("<span font='24'>🟢</span>")
                 btn_test.set_label("Connected! ✓")
@@ -880,6 +882,140 @@ class AssistantWindow(Gtk.Window):
         btn_area.pack_start(btn_close, False, False, 0)
 
         content_area.pack_start(btn_area, False, False, 0)
+        dialog.show_all()
+
+    def _show_privacy_dialog(self):
+        """Displays a transparent, comprehensive Privacy Statement & Google Gemini Connection details."""
+        dialog = Gtk.Dialog(
+            title="Privacy Statement & Data Protection",
+            parent=self,
+            flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT
+        )
+        dialog.set_default_size(580, 520)
+        content_area = dialog.get_content_area()
+        content_area.set_spacing(12)
+        content_area.set_margin_start(16)
+        content_area.set_margin_end(16)
+        content_area.set_margin_top(14)
+        content_area.set_margin_bottom(14)
+
+        scroller = Gtk.ScrolledWindow()
+        scroller.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        scroller.set_shadow_type(Gtk.ShadowType.NONE)
+
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
+        vbox.set_margin_start(6)
+        vbox.set_margin_end(10)
+        vbox.set_margin_top(4)
+        vbox.set_margin_bottom(10)
+
+        # Header banner
+        header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        lbl_icon = Gtk.Label()
+        lbl_icon.set_markup("<span font='28'>🔒</span>")
+        header_box.pack_start(lbl_icon, False, False, 0)
+
+        htext_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        lbl_h1 = Gtk.Label()
+        lbl_h1.set_markup("<b>Agy Helper Privacy &amp; Data Pledge</b>")
+        lbl_h1.get_style_context().add_class("header-title")
+        lbl_h1.set_xalign(0)
+        lbl_h2 = Gtk.Label(label="100% Free & Open Source • Zero 3rd-Party Tracking • Powered by Google Gemini")
+        lbl_h2.get_style_context().add_class("header-subtitle")
+        lbl_h2.set_xalign(0)
+        htext_box.pack_start(lbl_h1, False, False, 0)
+        htext_box.pack_start(lbl_h2, False, False, 0)
+        header_box.pack_start(htext_box, True, True, 0)
+        vbox.pack_start(header_box, False, False, 0)
+
+        # Card 1: Zero Third-Party Information Sharing
+        c1 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        c1.get_style_context().add_class("ios-card")
+        c1_title = Gtk.Label()
+        c1_title.set_markup("<b>🛡️ Zero 3rd-Party Information Sharing</b>")
+        c1_title.set_xalign(0)
+        c1.pack_start(c1_title, False, False, 0)
+
+        c1_desc = Gtk.Label(
+            label="• We Never Share or Sell Your Data: Agy Helper does not sell, rent, monetize, or transmit your personal information, computer activity, or browsing history to ANY third-party advertisers, data brokers, or marketing companies.\n"
+                  "• Zero Telemetry or Tracking: There are no advertising trackers, analytics cookies, or background telemetry services included in this application.\n"
+                  "• Pure Local Utility: Your computer metrics, system diagnostics, and 1-click fixes run exclusively and locally on your machine."
+        )
+        c1_desc.set_line_wrap(True)
+        c1_desc.set_xalign(0)
+        c1_desc.get_style_context().add_class("header-subtitle")
+        c1.pack_start(c1_desc, False, False, 0)
+        vbox.pack_start(c1, False, False, 0)
+
+        # Card 2: Connection with Google Gemini AI
+        c2 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        c2.get_style_context().add_class("ios-card")
+        c2_title = Gtk.Label()
+        c2_title.set_markup("<b>⚡ Connection with Google Gemini AI (How Agy Works)</b>")
+        c2_title.set_xalign(0)
+        c2.pack_start(c2_title, False, False, 0)
+
+        c2_desc = Gtk.Label(
+            label="• Friendly Tech Support Engine: Agy Helper connects to Google Gemini models (Gemini 3.7 Flash) using your local Google AGY engine to provide instant, patient, plain-English troubleshooting answers.\n"
+                  "• What is Sent: Only the technical question or message you type in the 'Ask Agy' chat box (and basic non-sensitive system environment details, such as your Linux OS version) is transmitted to Google's Gemini API to formulate an accurate answer.\n"
+                  "• What is NEVER Sent: Agy Helper NEVER transmits or inspects your personal documents, family photos, music, passwords, browser logins, or keystrokes. Your personal files remain strictly on your computer.\n"
+                  "• Encrypted Communication: All communication with Google Gemini is encrypted in transit over standard TLS/HTTPS."
+        )
+        c2_desc.set_line_wrap(True)
+        c2_desc.set_xalign(0)
+        c2_desc.get_style_context().add_class("header-subtitle")
+        c2.pack_start(c2_desc, False, False, 0)
+        vbox.pack_start(c2, False, False, 0)
+
+        # Card 3: Safety Guardrails & Local Control
+        c3 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        c3.get_style_context().add_class("ios-card")
+        c3_title = Gtk.Label()
+        c3_title.set_markup("<b>🔒 Built-In Safety Guardrails &amp; Local Control</b>")
+        c3_title.set_xalign(0)
+        c3.pack_start(c3_title, False, False, 0)
+
+        c3_desc = Gtk.Label(
+            label="• Protected Personal Folders: Hardcoded safety rules strictly prevent deleting or altering files in your ~/Documents, ~/Pictures, and ~/Music directories.\n"
+                  "• Explicit User Confirmation: No system changes or fixes are ever applied in the background without your explicit consent or button click.\n"
+                  "• Full Transparency: You can expand and review the exact commands before any safe action is performed."
+        )
+        c3_desc.set_line_wrap(True)
+        c3_desc.set_xalign(0)
+        c3_desc.get_style_context().add_class("header-subtitle")
+        c3.pack_start(c3_desc, False, False, 0)
+        vbox.pack_start(c3, False, False, 0)
+
+        # Card 4: Open Source & Community Auditable
+        c4 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        c4.get_style_context().add_class("ios-card")
+        c4_title = Gtk.Label()
+        c4_title.set_markup("<b>📖 100% Free &amp; Open Source Software</b>")
+        c4_title.set_xalign(0)
+        c4.pack_start(c4_title, False, False, 0)
+
+        c4_desc = Gtk.Label(
+            label="• Auditable Code: Agy Helper is published under the open-source MIT License. Anyone can inspect every script and line of code to verify that no trackers, spyware, or data collection exist.\n"
+                  "• Non-Commercial Mission: Built to provide accessible, patient computer assistance and scam protection for everyday users and families."
+        )
+        c4_desc.set_line_wrap(True)
+        c4_desc.set_xalign(0)
+        c4_desc.get_style_context().add_class("header-subtitle")
+        c4.pack_start(c4_desc, False, False, 0)
+        vbox.pack_start(c4, False, False, 0)
+
+        scroller.add(vbox)
+        content_area.pack_start(scroller, True, True, 0)
+
+        # Bottom Action Bar
+        btn_area = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        btn_area.set_halign(Gtk.Align.END)
+        btn_close = Gtk.Button(label="Close Privacy Statement")
+        btn_close.get_style_context().add_class("ios-btn-primary")
+        btn_close.connect("clicked", lambda b: dialog.destroy())
+        btn_area.pack_start(btn_close, False, False, 0)
+        content_area.pack_start(btn_area, False, False, 0)
+
         dialog.show_all()
 
     # -------------------------------------------------------------
@@ -1026,6 +1162,33 @@ class AssistantWindow(Gtk.Window):
 
         vbox.pack_start(tactics_card, False, False, 0)
 
+        # 4. Privacy Guarantee Card
+        priv_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        priv_card.get_style_context().add_class("ios-card")
+
+        lbl_priv_title = Gtk.Label(label="🔒 Your Privacy is 100% Protected")
+        lbl_priv_title.get_style_context().add_class("header-title")
+        lbl_priv_title.set_xalign(0)
+        priv_card.pack_start(lbl_priv_title, False, False, 0)
+
+        row_priv = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        lbl_priv_desc = Gtk.Label(
+            label="Agy Helper never sells or shares your personal information, messages, or files with third parties. "
+                  "Everything runs locally or via secure, encrypted Google Gemini AI processing."
+        )
+        lbl_priv_desc.set_line_wrap(True)
+        lbl_priv_desc.set_xalign(0)
+        lbl_priv_desc.get_style_context().add_class("header-subtitle")
+        row_priv.pack_start(lbl_priv_desc, True, True, 0)
+
+        btn_priv_read = Gtk.Button(label="Read Statement")
+        btn_priv_read.get_style_context().add_class("privacy-pill")
+        btn_priv_read.connect("clicked", lambda b: self._show_privacy_dialog())
+        row_priv.pack_start(btn_priv_read, False, False, 0)
+
+        priv_card.pack_start(row_priv, False, False, 0)
+        vbox.pack_start(priv_card, False, False, 0)
+
         self.scam_scroll.add(vbox)
         return self.scam_scroll
 
@@ -1142,6 +1305,33 @@ class AssistantWindow(Gtk.Window):
         settings_card.pack_start(lbl_set_info, False, False, 0)
 
         self.health_vbox.pack_start(settings_card, False, False, 0)
+
+        # 4. Privacy & Data Protection Card
+        priv_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        priv_card.get_style_context().add_class("ios-card")
+
+        lbl_priv_head = Gtk.Label()
+        lbl_priv_head.set_markup("<b>🔒 Privacy, Data Protection &amp; Gemini AI</b>")
+        lbl_priv_head.set_xalign(0)
+        priv_card.pack_start(lbl_priv_head, False, False, 0)
+
+        lbl_priv_info = Gtk.Label(
+            label="• Zero 3rd-Party Sharing: No personal info or browsing history is ever shared with advertisers or third parties.\n"
+                  "• Google Gemini AI: Only your typed technical questions and basic OS info are sent to Gemini to provide answers.\n"
+                  "• Personal Files Protected: Your private documents, photos, and passwords never leave your computer."
+        )
+        lbl_priv_info.set_line_wrap(True)
+        lbl_priv_info.set_xalign(0)
+        lbl_priv_info.get_style_context().add_class("header-subtitle")
+        priv_card.pack_start(lbl_priv_info, False, False, 0)
+
+        btn_open_priv = Gtk.Button(label="🔒 View Full Privacy Statement")
+        btn_open_priv.get_style_context().add_class("ios-btn-primary")
+        btn_open_priv.set_size_request(240, 38)
+        btn_open_priv.connect("clicked", lambda b: self._show_privacy_dialog())
+        priv_card.pack_start(btn_open_priv, False, False, 0)
+
+        self.health_vbox.pack_start(priv_card, False, False, 0)
 
         self.health_scroll.add(self.health_vbox)
         return self.health_scroll

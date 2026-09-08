@@ -85,6 +85,33 @@ button.status-pill-green label,
     font-weight: bold;
 }}
 
+/* Privacy Pill Button */
+button.privacy-pill,
+.privacy-pill {{
+    background-image: none;
+    background-color: #ECFDF5;
+    color: #047857;
+    border: 1px solid #A7F3D0;
+    border-radius: 14px;
+    padding: 3px 10px;
+    font-size: {f_xs}px;
+    font-weight: bold;
+}}
+
+button.privacy-pill:hover,
+.privacy-pill:hover {{
+    background-color: #D1FAE5;
+    border-color: #6EE7B7;
+}}
+
+button.privacy-pill label,
+.privacy-pill label,
+button.privacy-pill:backdrop label,
+.privacy-pill:backdrop label {{
+    color: #047857;
+    font-weight: bold;
+}}
+
 button.status-pill-red,
 .status-pill-red {{
     background-image: none;

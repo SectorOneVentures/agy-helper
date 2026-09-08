@@ -78,12 +78,14 @@ bash scripts/build_mac.sh
 
 ---
 
-## 🛡️ Privacy & Security First
+## 🛡️ Privacy, Security & Google Gemini Integration
 
-Agy Helper is built with privacy in mind:
-- **No Telemetry**: Zero personal analytics, tracking, or user data collection.
-- **Local & User-Controlled**: All configuration resides in standard user directories (`~/.config/agy-helper`).
-- **Safety Engine**: Every proposed command is parsed through [safety_engine.py](safety_engine.py) to prevent accidental data loss or harmful system modifications.
+Agy Helper is built from the ground up with a strict privacy-first architecture:
+- **Zero 3rd-Party Data Sharing**: No personal information, search queries, or browsing history is ever sold, tracked, or shared with third-party advertisers or data brokers.
+- **How Google Gemini is Used**: When you type a question in the AI Chat tab, only the specific technical prompt and basic operating system context are sent to Google Gemini (Gemini 3.7 Flash) to formulate an answer.
+- **Your Personal Files Never Leave Your Machine**: Private documents, family photos, passwords, and music are never uploaded or inspected.
+- **Hardcoded Local Safety Engine**: Built-in rules in [safety_engine.py](safety_engine.py) permanently prohibit deleting files in personal directories (`~/Documents`, `~/Pictures`, `~/Music`).
+- **Complete Privacy Statement**: Read our full [PRIVACY.md](PRIVACY.md) document for complete transparency.
 
 ---
 
