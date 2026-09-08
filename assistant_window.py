@@ -179,22 +179,22 @@ class AssistantWindow(Gtk.Window):
 
         # Zoom Accessibility Controls (Senior Friendly Font Scaling)
         zoom_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=3)
-        btn_zoom_out = Gtk.Button(label="A-")
-        btn_zoom_out.get_style_context().add_class("zoom-btn")
-        btn_zoom_out.set_tooltip_text("Make text smaller")
-        btn_zoom_out.connect("clicked", self._on_zoom_out)
+        self.btn_zoom_out = Gtk.Button(label="A-")
+        self.btn_zoom_out.get_style_context().add_class("zoom-btn")
+        self.btn_zoom_out.set_tooltip_text("Make text smaller")
+        self.btn_zoom_out.connect("clicked", self._on_zoom_out)
 
         self.lbl_zoom = Gtk.Label(label=get_scale_percentage())
         self.lbl_zoom.get_style_context().add_class("zoom-label")
 
-        btn_zoom_in = Gtk.Button(label="A+")
-        btn_zoom_in.get_style_context().add_class("zoom-btn")
-        btn_zoom_in.set_tooltip_text("Make text larger (Senior Visibility Mode)")
-        btn_zoom_in.connect("clicked", self._on_zoom_in)
+        self.btn_zoom_in = Gtk.Button(label="A+")
+        self.btn_zoom_in.get_style_context().add_class("zoom-btn")
+        self.btn_zoom_in.set_tooltip_text("Make text larger (Senior Visibility Mode)")
+        self.btn_zoom_in.connect("clicked", self._on_zoom_in)
 
-        zoom_box.pack_start(btn_zoom_out, False, False, 0)
+        zoom_box.pack_start(self.btn_zoom_out, False, False, 0)
         zoom_box.pack_start(self.lbl_zoom, False, False, 0)
-        zoom_box.pack_start(btn_zoom_in, False, False, 0)
+        zoom_box.pack_start(self.btn_zoom_in, False, False, 0)
         right_box.pack_start(zoom_box, False, False, 0)
 
         # Privacy Statement button
@@ -591,6 +591,7 @@ class AssistantWindow(Gtk.Window):
         lbl_desc.set_xalign(0)
         vbox.pack_start(lbl_desc, False, False, 0)
 
+        self.fixes_buttons = []
         for item in QUICK_FIXES:
             card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
             card.get_style_context().add_class("ios-card")
@@ -619,6 +620,7 @@ class AssistantWindow(Gtk.Window):
             btn_run.set_size_request(130, 38)
             btn_run.connect("clicked", lambda b, c=item["cmd"]: self._execute_safe_task(c, b))
             header_box.pack_end(btn_run, False, False, 0)
+            self.fixes_buttons.append((btn_run, item))
 
             card.pack_start(header_box, True, True, 0)
             vbox.pack_start(card, False, False, 0)
@@ -1210,16 +1212,16 @@ class AssistantWindow(Gtk.Window):
         btn_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
         btn_box.set_margin_top(4)
 
-        btn_ask_scam = Gtk.Button(label="🔍 Ask Agy to Review a Message")
-        btn_ask_scam.get_style_context().add_class("ios-btn-primary")
-        btn_ask_scam.connect("clicked", lambda b: self._start_scam_check())
-        btn_box.pack_start(btn_ask_scam, False, False, 0)
+        self.btn_ask_scam = Gtk.Button(label="🔍 Ask Agy to Review a Message")
+        self.btn_ask_scam.get_style_context().add_class("ios-btn-primary")
+        self.btn_ask_scam.connect("clicked", lambda b: self._start_scam_check())
+        btn_box.pack_start(self.btn_ask_scam, False, False, 0)
 
-        btn_kill_browsers = Gtk.Button(label="🛑 Close Active Browsers")
-        btn_kill_browsers.get_style_context().add_class("btn-emergency")
-        btn_kill_browsers.set_tooltip_text("Closes open browser windows if a stubborn webpage won't let you close the window.")
-        btn_kill_browsers.connect("clicked", lambda b: self._emergency_close_browsers())
-        btn_box.pack_start(btn_kill_browsers, False, False, 0)
+        self.btn_kill_browsers = Gtk.Button(label="🛑 Close Active Browsers")
+        self.btn_kill_browsers.get_style_context().add_class("btn-emergency")
+        self.btn_kill_browsers.set_tooltip_text("Closes open browser windows if a stubborn webpage won't let you close the window.")
+        self.btn_kill_browsers.connect("clicked", lambda b: self._emergency_close_browsers())
+        btn_box.pack_start(self.btn_kill_browsers, False, False, 0)
 
         banner.pack_start(btn_box, False, False, 0)
         vbox.pack_start(banner, False, False, 0)
@@ -1441,12 +1443,12 @@ class AssistantWindow(Gtk.Window):
         self.lbl_uptime_stat.set_xalign(0)
         self.res_card.pack_start(self.lbl_uptime_stat, False, False, 0)
 
-        btn_refresh = Gtk.Button(label="🔄 Refresh Metrics")
-        btn_refresh.get_style_context().add_class("ios-btn-secondary")
-        btn_refresh.set_valign(Gtk.Align.CENTER)
-        btn_refresh.set_size_request(160, 38)
-        btn_refresh.connect("clicked", lambda b: self._refresh_health_tab())
-        self.res_card.pack_start(btn_refresh, False, False, 0)
+        self.btn_refresh_health = Gtk.Button(label="🔄 Refresh Metrics")
+        self.btn_refresh_health.get_style_context().add_class("ios-btn-secondary")
+        self.btn_refresh_health.set_valign(Gtk.Align.CENTER)
+        self.btn_refresh_health.set_size_request(160, 38)
+        self.btn_refresh_health.connect("clicked", lambda b: self._refresh_health_tab())
+        self.res_card.pack_start(self.btn_refresh_health, False, False, 0)
 
         self.health_vbox.pack_start(self.res_card, False, False, 0)
 
