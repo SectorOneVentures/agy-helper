@@ -86,7 +86,7 @@ Pre-built binaries for your operating system are available on the [Releases](../
 ### Quick Setup
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/agy-helper.git
+git clone https://github.com/SectorOneVentures/agy-helper.git
 cd agy-helper
 
 # 2. Install dependencies (Debian/Ubuntu/Mint)
