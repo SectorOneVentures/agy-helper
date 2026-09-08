@@ -701,7 +701,7 @@ class AssistantWindow(Gtk.Window):
             info_box.pack_start(lbl_desc_app, False, False, 0)
             card.pack_start(info_box, True, True, 0)
 
-            is_installed = check_app_installed(app["check_cmd"])
+            is_installed = check_app_installed(app)
             btn_app = Gtk.Button()
             btn_app.set_valign(Gtk.Align.CENTER)
             btn_app.set_size_request(110, 38)
@@ -734,7 +734,7 @@ class AssistantWindow(Gtk.Window):
     def _on_app_installed_finish(self, app_id: str, success: bool):
         if app_id in self.app_buttons:
             btn, app = self.app_buttons[app_id]
-            if success or check_app_installed(app["check_cmd"]):
+            if success or check_app_installed(app):
                 btn.set_label("🚀 Open")
                 btn.get_style_context().remove_class("ios-btn-primary")
                 btn.get_style_context().add_class("ios-btn-open-green")
@@ -1361,7 +1361,12 @@ class AssistantWindow(Gtk.Window):
 
     def _emergency_close_browsers(self):
         """Safely closes all active web browsers in case of a locked scam popup."""
-        cmd = "killall chrome chrome-sandbox firefox brave-browser msedge 2>/dev/null || true"
+        if sys.platform.startswith("win"):
+            cmd = 'taskkill /F /IM chrome.exe /IM msedge.exe /IM firefox.exe /IM brave.exe 2>nul || true'
+        elif sys.platform == "darwin":
+            cmd = "killall -9 'Google Chrome' 'Firefox' 'Brave Browser' 'Safari' 'Microsoft Edge' 2>/dev/null || true"
+        else:
+            cmd = "killall chrome chrome-sandbox firefox brave-browser msedge 2>/dev/null || true"
         self._execute_safe_task(cmd, None)
         self._add_message_bubble("🛑 **Closed all web browser windows.** Any fake scam popups have been safely dismissed.", is_user=False)
         self.select_tab("chat")

@@ -123,12 +123,14 @@ def auto_connect_agy() -> tuple:
 def find_agy_binary() -> Optional[str]:
     """Finds the agy CLI binary across system and user-local directories."""
     # 1. Check standard PATH
-    found = shutil.which("agy")
-    if found and os.path.isfile(found) and os.access(found, os.X_OK):
-        return found
+    for name in ("agy", "agy.exe", "antigravity", "antigravity.exe"):
+        found = shutil.which(name)
+        if found and os.path.isfile(found) and os.access(found, os.X_OK):
+            return found
 
-    # 2. Check known candidate install locations
+    # 2. Check known candidate install locations across OSes
     candidates = [
+        # Linux & standard POSIX
         os.path.expanduser("~/.local/bin/agy"),
         os.path.expanduser("~/.gemini/antigravity/bin/agy"),
         os.path.expanduser("~/.config/Antigravity/bin/agy"),
@@ -138,6 +140,14 @@ def find_agy_binary() -> Optional[str]:
         "/var/lib/snapd/snap/bin/agy",
         os.path.expanduser("~/.local/bin/antigravity"),
         os.path.expanduser("~/.gemini/antigravity/bin/antigravity"),
+        # macOS
+        "/opt/homebrew/bin/agy",
+        "/Applications/Antigravity.app/Contents/MacOS/agy",
+        # Windows
+        os.path.expanduser("~/.gemini/antigravity/bin/agy.exe"),
+        os.path.expandvars(r"%LOCALAPPDATA%\Programs\Antigravity\bin\agy.exe"),
+        os.path.expandvars(r"%LOCALAPPDATA%\Programs\Antigravity\agy.exe"),
+        os.path.expandvars(r"%ProgramFiles%\Antigravity\agy.exe"),
     ]
 
     for cand in candidates:
@@ -160,11 +170,15 @@ def get_augmented_env() -> Dict[str, str]:
         "/sbin",
         "/bin",
         "/snap/bin",
+        "/opt/homebrew/bin",
+        # Windows candidate directories
+        os.path.expandvars(r"%LOCALAPPDATA%\Programs\Antigravity\bin"),
+        os.path.expandvars(r"%ProgramFiles%\Antigravity"),
     ]
     cur_path = env.get("PATH", "")
-    cur_list = cur_path.split(":") if cur_path else []
+    cur_list = cur_path.split(os.pathsep) if cur_path else []
     all_paths = [p for p in extra_paths if p not in cur_list] + cur_list
-    env["PATH"] = ":".join(all_paths)
+    env["PATH"] = os.pathsep.join(all_paths)
     return env
 
 class AgyClient:

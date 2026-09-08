@@ -51,9 +51,10 @@ CRITICAL_SYSTEM_DIRS = [
     os.environ.get("SystemRoot", "C:\\Windows"),
 ]
 
-# Deletion command patterns
+# Deletion command patterns (Linux, macOS, Windows)
 DELETION_COMMANDS = {
-    "rm", "unlink", "shred", "rmdir", "srm", "trash-put", "wipe"
+    "rm", "unlink", "shred", "rmdir", "srm", "trash-put", "wipe",
+    "del", "erase", "rd", "remove-item", "ri",
 }
 
 # Dangerous system-level patterns
@@ -76,6 +77,11 @@ DANGEROUS_SYSTEM_PATTERNS = [
     r"\|\s*(ba)?sh\b",                 # Piped execution into shell (e.g. curl ... | bash)
     r"\bbase64\s+(-d|--decode)\b",    # Obfuscated base64 payload execution
     r"\beval\s+",                     # Dynamic eval execution
+    # Windows destructive patterns
+    r"\bformat\s+[a-zA-Z]:",
+    r"\bdiskpart\b",
+    r"\brd\s+/[sq]\s+[a-zA-Z]:\\",
+    r"\bdel\s+/[sfq]+\s+[a-zA-Z]:\\",
 ]
 
 def is_path_under_dir(target_path: str, parent_dir: str) -> bool:
