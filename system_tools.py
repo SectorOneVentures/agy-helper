@@ -4,6 +4,7 @@ Handles diagnostic assessments, common 1-click IT repairs, and software installs
 """
 
 import os
+import sys
 import subprocess
 import shutil
 import threading
@@ -128,51 +129,149 @@ def launch_app_async(launch_cmd: str):
     t = threading.Thread(target=_launch, daemon=True)
     t.start()
 
-# Quick IT Fix definitions
-QUICK_FIXES = [
-    {
-        "id": "fix_network",
-        "title": "Fix Internet & Wi-Fi",
-        "icon": "network-wireless-symbolic",
-        "summary": "Flushes DNS cache, verifies gateway, and restarts Network Manager.",
-        "cmd": "resolvectl flush-caches 2>/dev/null || systemd-resolve --flush-caches 2>/dev/null; pkexec systemctl restart NetworkManager; ping -c 2 8.8.8.8",
-    },
-    {
-        "id": "fix_packages",
-        "title": "Repair Software & App Updates",
-        "icon": "system-software-update-symbolic",
-        "summary": "Fixes broken package locks, configures pending installs, and updates software repositories.",
-        "cmd": "pkexec dpkg --configure -a && pkexec apt-get --fix-broken install -y && pkexec apt-get update",
-    },
-    {
-        "id": "clean_space",
-        "title": "Free Up Disk Space Safely",
-        "icon": "drive-harddisk-symbolic",
-        "summary": "Safely clears old package caches, thumbnails, and vacuum logs. Personal files in Documents, Music, and Pictures are NEVER touched.",
-        "cmd": "rm -rf ~/.cache/thumbnails/* 2>/dev/null; pkexec apt-get clean; pkexec journalctl --vacuum-time=7d",
-    },
-    {
-        "id": "fix_audio",
-        "title": "Restart Audio & Sound",
-        "icon": "audio-speakers-symbolic",
-        "summary": "Restarts PipeWire / PulseAudio sound servers and un-mutes audio channels.",
-        "cmd": "systemctl --user restart pipewire pipewire-pulse wireplumber 2>/dev/null || pulseaudio -k 2>/dev/null; pactl set-sink-mute @DEFAULT_SINK@ 0 2>/dev/null || true",
-    },
-    {
-        "id": "check_health",
-        "title": "Full System Health Check",
-        "icon": "utilities-system-monitor-symbolic",
-        "summary": "Analyzes storage usage, memory load, processor temperatures, and battery condition.",
-        "cmd": "echo '=== Storage ==='; df -h -x tmpfs -x devtmpfs; echo '\n=== Memory ==='; free -h; echo '\n=== Uptime ==='; uptime",
-    },
-    {
-        "id": "update_system",
-        "title": "Check & Apply System Updates",
-        "icon": "software-update-available-symbolic",
-        "summary": "Safely fetches and applies available security and software updates.",
-        "cmd": "pkexec apt-get update && pkexec apt-get upgrade -y",
-    },
-]
+def get_quick_fixes() -> List[Dict[str, Any]]:
+    """Returns platform-specific 1-click IT repair actions."""
+    if sys.platform.startswith("win"):
+        # Windows Native Commands
+        return [
+            {
+                "id": "fix_network",
+                "title": "Fix Internet & Wi-Fi",
+                "icon": "network-wireless-symbolic",
+                "summary": "Flushes DNS resolver cache, releases and renews IP address lease, and checks connectivity.",
+                "cmd": "ipconfig /flushdns & ipconfig /renew & ping -n 2 8.8.8.8",
+            },
+            {
+                "id": "fix_packages",
+                "title": "Repair Windows Update",
+                "icon": "system-software-update-symbolic",
+                "summary": "Restarts Windows Update background services and verifies system integrity.",
+                "cmd": "net stop wuauserv & net start wuauserv & dism /online /cleanup-image /restorehealth",
+            },
+            {
+                "id": "clean_space",
+                "title": "Free Up Disk Space Safely",
+                "icon": "drive-harddisk-symbolic",
+                "summary": "Safely clears temporary application caches, crash dumps, and Windows temp files. Personal files in Documents, Pictures, and Music are NEVER touched.",
+                "cmd": "del /q /f /s \"%TEMP%\\*\" 2>nul & cleanmgr /verylowdisk 2>nul",
+            },
+            {
+                "id": "fix_audio",
+                "title": "Restart Audio & Sound",
+                "icon": "audio-speakers-symbolic",
+                "summary": "Restarts the Windows Audio service (Audiosrv) to resolve muted or stuck audio devices.",
+                "cmd": "net stop Audiosrv & net start Audiosrv",
+            },
+            {
+                "id": "check_health",
+                "title": "Full System Health Check",
+                "icon": "utilities-system-monitor-symbolic",
+                "summary": "Checks storage capacity, memory status, and system boot time.",
+                "cmd": "wmic logicaldisk get size,freespace,caption & systeminfo | findstr /B /C:\"Total Physical Memory\" /C:\"Available Physical Memory\" /C:\"System Boot Time\"",
+            },
+            {
+                "id": "update_system",
+                "title": "Check & Apply System Updates",
+                "icon": "software-update-available-symbolic",
+                "summary": "Scans for available Windows security updates and patches.",
+                "cmd": "usoclient StartInteractiveScan",
+            },
+        ]
+    elif sys.platform == "darwin":
+        # macOS Native Commands
+        return [
+            {
+                "id": "fix_network",
+                "title": "Fix Internet & Wi-Fi",
+                "icon": "network-wireless-symbolic",
+                "summary": "Flushes macOS DNS resolver cache, restarts mDNSResponder, and verifies connection.",
+                "cmd": "sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder; ping -c 2 8.8.8.8",
+            },
+            {
+                "id": "fix_packages",
+                "title": "Repair Homebrew & App Updates",
+                "icon": "system-software-update-symbolic",
+                "summary": "Cleans up outdated package caches and runs package diagnostics.",
+                "cmd": "brew cleanup -s 2>/dev/null; brew doctor 2>/dev/null || echo 'Homebrew not installed or system healthy'",
+            },
+            {
+                "id": "clean_space",
+                "title": "Free Up Disk Space Safely",
+                "icon": "drive-harddisk-symbolic",
+                "summary": "Safely clears user application caches, QuickLook preview caches, and system crash logs. Personal files in Documents, Pictures, and Music are NEVER touched.",
+                "cmd": "rm -rf ~/Library/Caches/* 2>/dev/null; qlmanage -r cache 2>/dev/null; sudo rm -rf /private/var/log/asl/*.asl 2>/dev/null",
+            },
+            {
+                "id": "fix_audio",
+                "title": "Restart Audio & Sound",
+                "icon": "audio-speakers-symbolic",
+                "summary": "Restarts macOS CoreAudio service to restore sound, microphones, and headphones.",
+                "cmd": "sudo killall coreaudiod",
+            },
+            {
+                "id": "check_health",
+                "title": "Full System Health Check",
+                "icon": "utilities-system-monitor-symbolic",
+                "summary": "Analyzes storage volumes, memory statistics, and uptime.",
+                "cmd": "df -h /; vm_stat; uptime",
+            },
+            {
+                "id": "update_system",
+                "title": "Check & Apply System Updates",
+                "icon": "software-update-available-symbolic",
+                "summary": "Scans for and applies official Apple macOS software and security updates.",
+                "cmd": "softwareupdate -ia",
+            },
+        ]
+    else:
+        # Linux (Ubuntu, Debian, Fedora, Arch)
+        return [
+            {
+                "id": "fix_network",
+                "title": "Fix Internet & Wi-Fi",
+                "icon": "network-wireless-symbolic",
+                "summary": "Flushes DNS cache, verifies gateway, and restarts Network Manager.",
+                "cmd": "resolvectl flush-caches 2>/dev/null || systemd-resolve --flush-caches 2>/dev/null; pkexec systemctl restart NetworkManager; ping -c 2 8.8.8.8",
+            },
+            {
+                "id": "fix_packages",
+                "title": "Repair Software & App Updates",
+                "icon": "system-software-update-symbolic",
+                "summary": "Fixes broken package locks, configures pending installs, and updates software repositories.",
+                "cmd": "pkexec dpkg --configure -a && pkexec apt-get --fix-broken install -y && pkexec apt-get update",
+            },
+            {
+                "id": "clean_space",
+                "title": "Free Up Disk Space Safely",
+                "icon": "drive-harddisk-symbolic",
+                "summary": "Safely clears old package caches, thumbnails, and vacuum logs. Personal files in Documents, Music, and Pictures are NEVER touched.",
+                "cmd": "rm -rf ~/.cache/thumbnails/* 2>/dev/null; pkexec apt-get clean; pkexec journalctl --vacuum-time=7d",
+            },
+            {
+                "id": "fix_audio",
+                "title": "Restart Audio & Sound",
+                "icon": "audio-speakers-symbolic",
+                "summary": "Restarts PipeWire / PulseAudio sound servers and un-mutes audio channels.",
+                "cmd": "systemctl --user restart pipewire pipewire-pulse wireplumber 2>/dev/null || pulseaudio -k 2>/dev/null; pactl set-sink-mute @DEFAULT_SINK@ 0 2>/dev/null || true",
+            },
+            {
+                "id": "check_health",
+                "title": "Full System Health Check",
+                "icon": "utilities-system-monitor-symbolic",
+                "summary": "Analyzes storage usage, memory load, processor temperatures, and battery condition.",
+                "cmd": "echo '=== Storage ==='; df -h -x tmpfs -x devtmpfs; echo '\n=== Memory ==='; free -h; echo '\n=== Uptime ==='; uptime",
+            },
+            {
+                "id": "update_system",
+                "title": "Check & Apply System Updates",
+                "icon": "software-update-available-symbolic",
+                "summary": "Safely fetches and applies available security and software updates.",
+                "cmd": "pkexec apt-get update && pkexec apt-get upgrade -y",
+            },
+        ]
+
+# Module-level variable for compatibility
+QUICK_FIXES = get_quick_fixes()
 
 def get_system_env() -> Dict[str, str]:
     """Returns an environment with standard and user binary paths."""
@@ -242,10 +341,9 @@ def get_system_health() -> Dict[str, Any]:
 
     # 2. Disk
     try:
-        stat = os.statvfs(os.path.expanduser("~"))
-        total = stat.f_blocks * stat.f_frsize
-        avail = stat.f_bavail * stat.f_frsize
-        used = total - avail
+        usage = shutil.disk_usage(os.path.expanduser("~"))
+        total = usage.total
+        used = usage.used
         if total > 0:
             pct = int((used / total) * 100)
             data["disk_percent"] = pct

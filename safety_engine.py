@@ -25,6 +25,7 @@ PROTECTED_MEDIA_DIRS = [
     os.path.realpath(os.path.expanduser("~/Documents")),
     os.path.realpath(os.path.expanduser("~/Music")),
     os.path.realpath(os.path.expanduser("~/Pictures")),
+    os.path.realpath(os.path.expanduser("~/Desktop")),
 ]
 
 # Critical system directories that must not be destructively altered
@@ -45,6 +46,9 @@ CRITICAL_SYSTEM_DIRS = [
     "/usr/sbin",
     "/sbin",
     "/bin",
+    "/System",
+    "/Library",
+    os.environ.get("SystemRoot", "C:\\Windows"),
 ]
 
 # Deletion command patterns
