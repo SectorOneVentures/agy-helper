@@ -327,70 +327,99 @@ def main():
         timeline.append((current_frame, current_frame + num_frames, pos, pos, False, title, sub, win_img))
         current_frame += num_frames
 
-    # --- 1. Desktop & Mascot ---
-    add_move((960, 540), pos_mascot_center, 48, "Meet Agy", "A friendly little helper that stays right on your screen.", None)
-    add_hover_click(pos_mascot_center, 24, "Always Here to Help", "Click Agy whenever you have a question or need a hand.", None)
+    # -------------------------------------------------------------
+    # 11 Clean, Kid-Friendly Scenes (Max 12, Long Reading Pauses)
+    # -------------------------------------------------------------
 
-    # --- 2. Assistant Window Opens & Question 1 ---
-    add_move(pos_mascot_center, pos_chat_entry, 36, "Your Helper Pops Open", "Everything stays right here on your desktop, nice and simple.", img_win_welcome)
-    add_hover_click(pos_chat_entry, 18, "Ask in Plain English", "Type your question just like you are talking to a friend.", img_win_welcome)
-    add_hold(pos_chat_entry, 18, "Ask in Plain English", "Type your question just like you are talking to a friend.", img_win_typing1)
-    add_move(pos_chat_entry, pos_send_btn, 30, "Ask in Plain English", "Type your question just like you are talking to a friend.", img_win_typing1)
-    add_hover_click(pos_send_btn, 18, "Finding an Answer", "Checking for simple things that can help right away.", img_win_typing1)
+    # --- 1. Desktop & Mascot (4.0s) ---
+    c1_title = "Meet Agy"
+    c1_sub = "A friendly little helper that stays right on your screen. Click Agy anytime you need a hand!"
+    add_move((960, 540), pos_mascot_center, 60, c1_title, c1_sub, None)
+    add_hover_click(pos_mascot_center, 36, c1_title, c1_sub, None)
 
-    # Q1 Answer (Reading time: 4.0s)
+    # --- 2. Window Opens & Question 1 (5.0s) ---
+    c2_title = "Ask in Plain English"
+    c2_sub = "Ask questions just like talking to a friend. No complicated computer words needed."
+    add_move(pos_mascot_center, pos_chat_entry, 36, c2_title, c2_sub, img_win_welcome)
+    add_hover_click(pos_chat_entry, 18, c2_title, c2_sub, img_win_welcome)
+    add_hold(pos_chat_entry, 24, c2_title, c2_sub, img_win_typing1)
+    add_move(pos_chat_entry, pos_send_btn, 24, c2_title, c2_sub, img_win_typing1)
+    add_hover_click(pos_send_btn, 18, c2_title, c2_sub, img_win_typing1)
+
+    # --- 3. Reading Internet Advice (5.5s) ---
+    c3_title = "Easy Steps to Try"
+    c3_sub = "Agy gives simple things you can try at home, like restarting your Wi-Fi router."
     q1_read_pos = (win_x + 650, win_y + 420)
-    add_move(pos_send_btn, q1_read_pos, 18, "Easy Steps to Try", "Clear, simple tips you can try yourself at home.", img_win_chat_q1)
-    add_hold(q1_read_pos, 96, "Easy Steps to Try", "Clear, simple tips you can try yourself at home.", img_win_chat_q1)
+    add_move(pos_send_btn, q1_read_pos, 18, c3_title, c3_sub, img_win_chat_q1)
+    add_hold(q1_read_pos, 114, c3_title, c3_sub, img_win_chat_q1)
 
-    # --- 3. Question 2 (RAM Analogy) ---
-    add_move(q1_read_pos, pos_chat_entry, 30, "Curious How Things Work?", "Ask what confusing computer parts actually do.", img_win_chat_q1)
-    add_hover_click(pos_chat_entry, 18, "Curious How Things Work?", "Ask what confusing computer parts actually do.", img_win_chat_q1)
-    add_hold(pos_chat_entry, 18, "Curious How Things Work?", "Ask what confusing computer parts actually do.", img_win_typing2)
-    add_move(pos_chat_entry, pos_send_btn, 30, "Curious How Things Work?", "Ask what confusing computer parts actually do.", img_win_typing2)
-    add_hover_click(pos_send_btn, 18, "Finding an Answer", "Putting it into words that actually make sense.", img_win_typing2)
+    # --- 4. Asking Question 2 (RAM) (4.5s) ---
+    c4_title = "Curious How Things Work?"
+    c4_sub = "Ask what confusing computer parts do, and get answers that actually make sense."
+    add_move(q1_read_pos, pos_chat_entry, 24, c4_title, c4_sub, img_win_chat_q1)
+    add_hover_click(pos_chat_entry, 18, c4_title, c4_sub, img_win_chat_q1)
+    add_hold(pos_chat_entry, 24, c4_title, c4_sub, img_win_typing2)
+    add_move(pos_chat_entry, pos_send_btn, 24, c4_title, c4_sub, img_win_typing2)
+    add_hover_click(pos_send_btn, 18, c4_title, c4_sub, img_win_typing2)
 
-    # Q2 Answer (Reading time: 4.0s)
+    # --- 5. Reading RAM Explanation (5.5s) ---
+    c5_title = "Simple Explanations"
+    c5_sub = "RAM is like a kitchen table: a bigger table gives you more room to work without slowing down."
     q2_read_pos = (win_x + 650, win_y + 480)
-    add_move(pos_send_btn, q2_read_pos, 18, "Simple Explanations", "RAM is like a kitchen table: a bigger table gives you more room to work!", img_win_chat_q2)
-    add_hold(q2_read_pos, 96, "Simple Explanations", "RAM is like a kitchen table: a bigger table gives you more room to work!", img_win_chat_q2)
+    add_move(pos_send_btn, q2_read_pos, 18, c5_title, c5_sub, img_win_chat_q2)
+    add_hold(q2_read_pos, 114, c5_title, c5_sub, img_win_chat_q2)
 
-    # --- 4. Tab 1: 1-Click Fixes ---
-    add_move(q2_read_pos, pos_tab_fixes, 30, "Quick Fixes", "Fix sound glitches, restart Wi-Fi, and clean up junk files with one tap.", img_win_chat_q2)
-    add_hover_click(pos_tab_fixes, 18, "Quick Fixes", "Fix sound glitches, restart Wi-Fi, and clean up junk files with one tap.", img_win_chat_q2)
-    add_hold(pos_tab_fixes, 12, "Quick Fixes", "Fix sound glitches, restart Wi-Fi, and clean up junk files with one tap.", img_win_fixes)
-    add_move(pos_tab_fixes, pos_run_fix, 30, "Quick Fixes", "Fix sound glitches, restart Wi-Fi, and clean up junk files with one tap.", img_win_fixes)
-    add_hover_click(pos_run_fix, 18, "Safe and Simple", "Fixes common hiccups safely, without touching any of your personal files.", img_win_fixes)
-    add_hold(pos_run_fix, 48, "Safe and Simple", "Fixes common hiccups safely, without touching any of your personal files.", img_win_fixes)
+    # --- 6. Tab 1: 1-Click Fixes (6.0s) ---
+    c6_title = "One-Click Fixes"
+    c6_sub = "Fix sound problems, restart Wi-Fi, and clean up junk files with a single tap."
+    add_move(q2_read_pos, pos_tab_fixes, 30, c6_title, c6_sub, img_win_chat_q2)
+    add_hover_click(pos_tab_fixes, 18, c6_title, c6_sub, img_win_chat_q2)
+    add_hold(pos_tab_fixes, 12, c6_title, c6_sub, img_win_fixes)
+    add_move(pos_tab_fixes, pos_run_fix, 24, c6_title, c6_sub, img_win_fixes)
+    add_hover_click(pos_run_fix, 18, c6_title, c6_sub, img_win_fixes)
+    add_hold(pos_run_fix, 42, c6_title, c6_sub, img_win_fixes)
 
-    # --- 5. Tab 2: Everyday App Installer ---
-    add_move(pos_run_fix, pos_tab_apps, 30, "Get Trusted Apps", "Install popular programs like Firefox, Chrome, and VLC in one click.", img_win_fixes)
-    add_hover_click(pos_tab_apps, 18, "Get Trusted Apps", "Install popular programs like Firefox, Chrome, and VLC in one click.", img_win_fixes)
-    add_hold(pos_tab_apps, 12, "Get Trusted Apps", "Install popular programs like Firefox, Chrome, and VLC in one click.", img_win_apps)
-    add_move(pos_tab_apps, pos_app_btn, 30, "Get Trusted Apps", "Install popular programs like Firefox, Chrome, and VLC in one click.", img_win_apps)
-    add_hold(pos_app_btn, 48, "Safe Downloads", "Only the real programs—no ads, popups, or sneaky junk.", img_win_apps)
+    # --- 7. Tab 2: Everyday App Installer (5.5s) ---
+    c7_title = "Get Helpful Apps"
+    c7_sub = "Install safe programs like Firefox, Chrome, and VLC in one click with no tricky ads."
+    add_move(pos_run_fix, pos_tab_apps, 30, c7_title, c7_sub, img_win_fixes)
+    add_hover_click(pos_tab_apps, 18, c7_title, c7_sub, img_win_fixes)
+    add_hold(pos_tab_apps, 12, c7_title, c7_sub, img_win_apps)
+    add_move(pos_tab_apps, pos_app_btn, 24, c7_title, c7_sub, img_win_apps)
+    add_hold(pos_app_btn, 48, c7_title, c7_sub, img_win_apps)
 
-    # --- 6. Tab 3: Scam Help ---
-    add_move(pos_app_btn, pos_tab_scam, 30, "Scam Protection", "Not sure if an email or message is real? Check here first.", img_win_apps)
-    add_hover_click(pos_tab_scam, 18, "Scam Protection", "Not sure if an email or message is real? Check here first.", img_win_apps)
-    add_hold(pos_tab_scam, 12, "Scam Protection", "Not sure if an email or message is real? Check here first.", img_win_scam)
-    add_move(pos_tab_scam, pos_scam_btn, 30, "Scam Protection", "Not sure if an email or message is real? Check here first.", img_win_scam)
-    add_hold(pos_scam_btn, 48, "Spot the Tricks", "Learn how to spot fake virus warnings and phony delivery texts.", img_win_scam)
+    # --- 8. Tab 3: Scam Help (5.5s) ---
+    c8_title = "Scam Protection"
+    c8_sub = "Learn how to spot fake virus warnings and fake delivery texts so you never get tricked."
+    add_move(pos_app_btn, pos_tab_scam, 30, c8_title, c8_sub, img_win_apps)
+    add_hover_click(pos_tab_scam, 18, c8_title, c8_sub, img_win_apps)
+    add_hold(pos_tab_scam, 12, c8_title, c8_sub, img_win_scam)
+    add_move(pos_tab_scam, pos_scam_btn, 24, c8_title, c8_sub, img_win_scam)
+    add_hold(pos_scam_btn, 48, c8_title, c8_sub, img_win_scam)
 
-    # --- 7. Tab 4: Safety & Health ---
-    add_move(pos_scam_btn, pos_tab_health, 30, "Your Files Are Safe", "Your photos, homework, and documents are always protected.", img_win_scam)
-    add_hover_click(pos_tab_health, 18, "Your Files Are Safe", "Your photos, homework, and documents are always protected.", img_win_scam)
-    add_hold(pos_tab_health, 12, "Your Files Are Safe", "Your photos, homework, and documents are always protected.", img_win_health)
-    add_move(pos_tab_health, pos_health_btn, 30, "Your Files Are Safe", "Your photos, homework, and documents are always protected.", img_win_health)
-    add_hold(pos_health_btn, 48, "Computer Checkup", "See how much room and memory your computer has left.", img_win_health)
+    # --- 9. Tab 4: Safety & Health (5.5s) ---
+    c9_title = "Your Files Are Always Safe"
+    c9_sub = "Your photos, homework, and personal folders are protected and will never be touched."
+    add_move(pos_scam_btn, pos_tab_health, 30, c9_title, c9_sub, img_win_scam)
+    add_hover_click(pos_tab_health, 18, c9_title, c9_sub, img_win_scam)
+    add_hold(pos_tab_health, 12, c9_title, c9_sub, img_win_health)
+    add_move(pos_tab_health, pos_health_btn, 24, c9_title, c9_sub, img_win_health)
+    add_hold(pos_health_btn, 48, c9_title, c9_sub, img_win_health)
 
-    # --- 8. Senior Zoom & Accessibility ---
-    add_move(pos_health_btn, pos_zoom_in, 30, "Make Words Bigger", "One tap makes the text bigger so it is super easy to read.", img_win_health)
-    add_hover_click(pos_zoom_in, 18, "Make Words Bigger", "One tap makes the text bigger so it is super easy to read.", img_win_health)
-    add_hold(pos_zoom_in, 12, "Make Words Bigger", "One tap makes the text bigger so it is super easy to read.", img_win_zoom)
-    add_move(pos_zoom_in, pos_tab_chat, 24, "Agy Helper", "Free, private, and always here to help you out.", img_win_zoom)
-    add_hover_click(pos_tab_chat, 18, "Agy Helper", "Free, private, and always here to help you out.", img_win_zoom)
-    add_hold(pos_tab_chat, 48, "Agy Helper", "Free, private, and always here to help you out.", img_win_zoom)
+    # --- 10. Senior Zoom: Make Words Bigger (5.5s) ---
+    c10_title = "Make Words Bigger"
+    c10_sub = "Tap the plus button anytime to make all the text bigger and super easy to read."
+    add_move(pos_health_btn, pos_zoom_in, 30, c10_title, c10_sub, img_win_health)
+    add_hover_click(pos_zoom_in, 18, c10_title, c10_sub, img_win_health)
+    add_hold(pos_zoom_in, 18, c10_title, c10_sub, img_win_zoom)
+    add_move(pos_zoom_in, pos_tab_chat, 24, c10_title, c10_sub, img_win_zoom)
+    add_hover_click(pos_tab_chat, 18, c10_title, c10_sub, img_win_zoom)
+    add_hold(pos_tab_chat, 24, c10_title, c10_sub, img_win_zoom)
+
+    # --- 11. Final Summary (4.5s) ---
+    c11_title = "Agy Helper"
+    c11_sub = "Free, private, and always here to help you and your family."
+    add_hold(pos_tab_chat, 108, c11_title, c11_sub, img_win_zoom)
 
     total_frames = current_frame
     total_seconds = total_frames / FPS
