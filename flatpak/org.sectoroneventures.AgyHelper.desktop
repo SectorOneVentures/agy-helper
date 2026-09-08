@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Agy Helper
+Comment=Friendly Desktop Helper & IT Troubleshooter
+Exec=agy-helper --open-window
+Icon=org.sectoroneventures.AgyHelper
+Terminal=false
+Type=Application
+Categories=Utility;System;
+Keywords=helper;support;troubleshoot;ai;fix;scam;

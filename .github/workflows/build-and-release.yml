@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   # -------------------------------------------------------------
-  # 1. LINUX BUILD (Standalone Binary & Snap)
+  # 1. LINUX BUILD (Standalone Binary, Snap & Deb)
   # -------------------------------------------------------------
   build-linux:
     runs-on: ubuntu-latest
@@ -26,10 +26,10 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install System Dependencies (GTK3)
+      - name: Install System Dependencies (GTK3 & Snap Tools)
         run: |
           sudo apt update
-          sudo apt install -y python3-gi python3-gi-cairo gir1.2-gtk-3.0 libgirepository1.0-dev
+          sudo apt install -y python3-gi python3-gi-cairo gir1.2-gtk-3.0 libgirepository1.0-dev snapd dpkg
 
       - name: Install Python Dependencies & PyInstaller
         run: |
@@ -46,14 +46,89 @@ jobs:
           tar -czvf AgyHelper-Linux-x86_64.tar.gz AgyHelper
           cd ..
 
-      - name: Upload Linux Artifact
+      - name: Build Debian Package (.deb)
+        run: |
+          mkdir -p /tmp/pkg_deb/DEBIAN
+          mkdir -p /tmp/pkg_deb/usr/bin
+          mkdir -p /tmp/pkg_deb/usr/share/applications
+          mkdir -p /tmp/pkg_deb/usr/share/icons/hicolor/128x128/apps
+
+          cat << 'EOF' > /tmp/pkg_deb/DEBIAN/control
+          Package: agy-helper
+          Version: 1.0.0
+          Section: utils
+          Priority: optional
+          Architecture: amd64
+          Maintainer: Agy Helper Contributors <contributors@agy-helper.open>
+          Description: Friendly desktop companion and 1-click IT troubleshooter
+           Agy Helper is a friendly, accessible desktop companion and 1-click IT troubleshooter
+           powered by Google AGY and Gemini AI.
+          EOF
+
+          cp dist/AgyHelper /tmp/pkg_deb/usr/bin/agy-helper
+          chmod 755 /tmp/pkg_deb/usr/bin/agy-helper
+          cp assets/icon.png /tmp/pkg_deb/usr/share/icons/hicolor/128x128/apps/agy-helper.png
+
+          cat << 'EOF' > /tmp/pkg_deb/usr/share/applications/agy-helper.desktop
+          [Desktop Entry]
+          Name=Agy Helper
+          Comment=Friendly Desktop Helper & IT Troubleshooter
+          Exec=/usr/bin/agy-helper --open-window
+          Icon=agy-helper
+          Terminal=false
+          Type=Application
+          Categories=Utility;System;
+          EOF
+
+          dpkg-deb --build --root-owner-group /tmp/pkg_deb dist/agy-helper_1.0.0_amd64.deb
+
+      - name: Build Snap Package (.snap)
+        run: |
+          mkdir -p /tmp/pkg_snap/meta/gui
+          cp assets/icon.png /tmp/pkg_snap/meta/gui/icon.png
+          cp dist/AgyHelper /tmp/pkg_snap/AgyHelper
+          chmod +x /tmp/pkg_snap/AgyHelper
+
+          cat << 'EOF' > /tmp/pkg_snap/meta/snap.yaml
+          name: agy-helper
+          version: '1.0.0'
+          summary: Agy IT Companion Desktop Helper
+          description: |
+            Friendly, stress-free desktop companion and 1-click IT troubleshooter.
+          architectures:
+            - amd64
+          base: core24
+          grade: stable
+          confinement: classic
+          apps:
+            agy-helper:
+              command: AgyHelper
+          EOF
+
+          cat << 'EOF' > /tmp/pkg_snap/meta/gui/agy-helper.desktop
+          [Desktop Entry]
+          Name=Agy Helper
+          Comment=Friendly Desktop Helper & IT Troubleshooter
+          Exec=agy-helper
+          Icon=${SNAP}/meta/gui/icon.png
+          Terminal=false
+          Type=Application
+          Categories=Utility;System;
+          EOF
+
+          snap pack /tmp/pkg_snap dist/
+
+      - name: Upload Linux Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: AgyHelper-Linux-x86_64
-          path: dist/AgyHelper-Linux-x86_64.tar.gz
+          name: AgyHelper-Linux
+          path: |
+            dist/AgyHelper-Linux-x86_64.tar.gz
+            dist/agy-helper_1.0.0_amd64.deb
+            dist/agy-helper_*.snap
 
   # -------------------------------------------------------------
-  # 2. WINDOWS BUILD (.exe)
+  # 2. WINDOWS BUILD (.exe via MSYS2 / MinGW GTK3)
   # -------------------------------------------------------------
   build-windows:
     runs-on: windows-latest
@@ -61,26 +136,33 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up MSYS2 with GTK3 & Python
+        uses: msys2/setup-msys2@v2
         with:
-          python-version: '3.11'
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-python
+            mingw-w64-x86_64-python-gobject
+            mingw-w64-x86_64-python-pip
+            mingw-w64-x86_64-gtk3
+            mingw-w64-x86_64-adwaita-icon-theme
 
-      - name: Install PyInstaller
+      - name: Build Windows Executable
+        shell: msys2 {0}
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install pyinstaller
-
-      - name: Build Windows Executable (.exe)
-        shell: cmd
-        run: |
+          python3 -m pip install pyinstaller
           pyinstaller --clean agy_helper.spec
+          cd dist
+          zip -r AgyHelper-Windows-x64.zip AgyHelper.exe || true
 
       - name: Upload Windows Artifact
         uses: actions/upload-artifact@v4
         with:
           name: AgyHelper-Windows
-          path: dist/AgyHelper.exe
+          path: |
+            dist/AgyHelper.exe
+            dist/AgyHelper-Windows-x64.zip
 
   # -------------------------------------------------------------
   # 3. macOS BUILD (.app & .dmg)
@@ -91,16 +173,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Dependencies
+      - name: Install GTK3 and Python Dependencies
         run: |
-          pip install --upgrade pip
-          pip install pyinstaller
-          brew install create-dmg || true
+          brew install gtk+3 pygobject3 adwaita-icon-theme create-dmg || true
+          python3 -m pip install --upgrade pip
+          python3 -m pip install pyinstaller
 
       - name: Build macOS App Bundle
         run: |
@@ -131,24 +208,46 @@ jobs:
       - name: Upload macOS Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: AgyHelper-macOS-DMG
+          name: AgyHelper-macOS
           path: dist/AgyHelper-macOS.dmg
 
   # -------------------------------------------------------------
-  # 4. CREATE GITHUB RELEASE (On Tag)
+  # 4. FLATPAK BUILD (Linux Universal Bundle)
   # -------------------------------------------------------------
-  release:
-    needs: [build-linux, build-windows, build-macos]
-    if: startsWith(github.ref, 'refs/tags/')
+  build-flatpak:
     runs-on: ubuntu-latest
     steps:
-      - name: Download Linux Artifact
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Flatpak Builder
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: AgyHelper.flatpak
+          manifest-path: flatpak/org.sectoroneventures.AgyHelper.yml
+          run-tests: false
+
+      - name: Upload Flatpak Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AgyHelper-Flatpak
+          path: AgyHelper.flatpak
+
+  # -------------------------------------------------------------
+  # 5. CREATE GITHUB RELEASE (On Tags or Main)
+  # -------------------------------------------------------------
+  release:
+    needs: [build-linux, build-windows, build-macos, build-flatpak]
+    if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Linux Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: AgyHelper-Linux-x86_64
+          name: AgyHelper-Linux
           path: release/
 
-      - name: Download Windows Artifact
+      - name: Download Windows Artifacts
         uses: actions/download-artifact@v4
         with:
           name: AgyHelper-Windows
@@ -157,16 +256,22 @@ jobs:
       - name: Download macOS Artifact
         uses: actions/download-artifact@v4
         with:
-          name: AgyHelper-macOS-DMG
+          name: AgyHelper-macOS
           path: release/
 
-      - name: Create GitHub Release
+      - name: Download Flatpak Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: AgyHelper-Flatpak
+          path: release/
+
+      - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: v1.0.0
+          name: "Agy Helper v1.0.0 — Multi-Platform Release"
           files: |
-            release/AgyHelper-Linux-x86_64.tar.gz
-            release/AgyHelper.exe
-            release/AgyHelper-macOS.dmg
+            release/*
           draft: false
           prerelease: false
           generate_release_notes: true

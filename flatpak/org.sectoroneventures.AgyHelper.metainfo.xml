@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.sectoroneventures.AgyHelper</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>Agy Helper</name>
+  <summary>Friendly Desktop Helper &amp; 1-Click IT Troubleshooter</summary>
+  <description>
+    <p>
+      Agy Helper is a friendly, accessible desktop companion and 1-click IT troubleshooter designed for everyday computer users, families, and seniors.
+    </p>
+    <p>
+      Features include plain-English AI tech support powered by Google Gemini, 1-click sound and Wi-Fi fixes, safe disk cleanup, scam and phishing education, and senior-friendly font zoom.
+    </p>
+  </description>
+  <launchable type="desktop-id">org.sectoroneventures.AgyHelper.desktop</launchable>
+  <url type="homepage">https://github.com/SectorOneVentures/agy-helper</url>
+  <url type="bugtracker">https://github.com/SectorOneVentures/agy-helper/issues</url>
+  <provides>
+    <binary>agy-helper</binary>
+  </provides>
+  <releases>
+    <release version="1.0.0" date="2026-09-08"/>
+  </releases>
+  <content_rating type="oars-1.1"/>
+</component>

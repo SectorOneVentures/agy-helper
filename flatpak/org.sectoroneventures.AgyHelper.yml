@@ -1,0 +1,34 @@
+app-id: org.sectoroneventures.AgyHelper
+runtime: org.gnome.Platform
+runtime-version: '46'
+sdk: org.gnome.Sdk
+command: agy-helper
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --filesystem=home:ro
+  - --talk-name=org.freedesktop.Notifications
+
+modules:
+  - name: agy-helper
+    buildsystem: simple
+    build-commands:
+      - mkdir -p ${FLATPAK_DEST}/bin
+      - mkdir -p ${FLATPAK_DEST}/lib/agy-helper
+      - cp -r assets ${FLATPAK_DEST}/lib/agy-helper/
+      - cp *.py ${FLATPAK_DEST}/lib/agy-helper/
+      - |
+        cat << 'EOF' > ${FLATPAK_DEST}/bin/agy-helper
+        #!/bin/sh
+        exec python3 /app/lib/agy-helper/main.py "$@"
+        EOF
+      - chmod +x ${FLATPAK_DEST}/bin/agy-helper
+      - install -D -m644 flatpak/org.sectoroneventures.AgyHelper.desktop ${FLATPAK_DEST}/share/applications/org.sectoroneventures.AgyHelper.desktop
+      - install -D -m644 flatpak/org.sectoroneventures.AgyHelper.metainfo.xml ${FLATPAK_DEST}/share/metainfo/org.sectoroneventures.AgyHelper.metainfo.xml
+      - install -D -m644 assets/icon.png ${FLATPAK_DEST}/share/icons/hicolor/128x128/apps/org.sectoroneventures.AgyHelper.png
+    sources:
+      - type: dir
+        path: ..
