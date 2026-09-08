@@ -328,69 +328,69 @@ def main():
         current_frame += num_frames
 
     # --- 1. Desktop & Mascot ---
-    add_move((960, 540), pos_mascot_center, 48, "Meet Agy Desktop Helper", "A quiet, friendly companion designed for everyday computer tasks.", None)
-    add_hover_click(pos_mascot_center, 24, "One-Click Assistance", "Click Agy anytime you have a question or need computer help.", None)
+    add_move((960, 540), pos_mascot_center, 48, "Meet Agy", "A friendly little helper that stays right on your screen.", None)
+    add_hover_click(pos_mascot_center, 24, "Always Here to Help", "Click Agy whenever you have a question or need a hand.", None)
 
     # --- 2. Assistant Window Opens & Question 1 ---
-    add_move(pos_mascot_center, pos_chat_entry, 36, "Assistant Window Opens", "A clean, simple window appears right on your screen without opening web browsers.", img_win_welcome)
-    add_hover_click(pos_chat_entry, 18, "Natural Language Support", "Type questions in plain everyday English. No technical jargon required.", img_win_welcome)
-    add_hold(pos_chat_entry, 18, "Natural Language Support", "Type questions in plain everyday English. No technical jargon required.", img_win_typing1)
-    add_move(pos_chat_entry, pos_send_btn, 30, "Natural Language Support", "Type questions in plain everyday English. No technical jargon required.", img_win_typing1)
-    add_hover_click(pos_send_btn, 18, "Instant AI Response", "Sending your question directly to Google AI assistance.", img_win_typing1)
+    add_move(pos_mascot_center, pos_chat_entry, 36, "Your Helper Pops Open", "Everything stays right here on your desktop, nice and simple.", img_win_welcome)
+    add_hover_click(pos_chat_entry, 18, "Ask in Plain English", "Type your question just like you are talking to a friend.", img_win_welcome)
+    add_hold(pos_chat_entry, 18, "Ask in Plain English", "Type your question just like you are talking to a friend.", img_win_typing1)
+    add_move(pos_chat_entry, pos_send_btn, 30, "Ask in Plain English", "Type your question just like you are talking to a friend.", img_win_typing1)
+    add_hover_click(pos_send_btn, 18, "Finding an Answer", "Checking for simple things that can help right away.", img_win_typing1)
 
     # Q1 Answer (Reading time: 4.0s)
     q1_read_pos = (win_x + 650, win_y + 420)
-    add_move(pos_send_btn, q1_read_pos, 18, "Jargon-Free Guidance", "Agy gives clear physical steps you can easily check yourself.", img_win_chat_q1)
-    add_hold(q1_read_pos, 96, "Jargon-Free Guidance", "Agy gives clear physical steps you can easily check yourself.", img_win_chat_q1)
+    add_move(pos_send_btn, q1_read_pos, 18, "Easy Steps to Try", "Clear, simple tips you can try yourself at home.", img_win_chat_q1)
+    add_hold(q1_read_pos, 96, "Easy Steps to Try", "Clear, simple tips you can try yourself at home.", img_win_chat_q1)
 
     # --- 3. Question 2 (RAM Analogy) ---
-    add_move(q1_read_pos, pos_chat_entry, 30, "Clear Explanations", "Ask any computer concept and receive friendly, relatable answers.", img_win_chat_q1)
-    add_hover_click(pos_chat_entry, 18, "Clear Explanations", "Ask any computer concept and receive friendly, relatable answers.", img_win_chat_q1)
-    add_hold(pos_chat_entry, 18, "Clear Explanations", "Ask any computer concept and receive friendly, relatable answers.", img_win_typing2)
-    add_move(pos_chat_entry, pos_send_btn, 30, "Clear Explanations", "Ask any computer concept and receive friendly, relatable answers.", img_win_typing2)
-    add_hover_click(pos_send_btn, 18, "Instant AI Response", "Sending your question directly to Google AI assistance.", img_win_typing2)
+    add_move(q1_read_pos, pos_chat_entry, 30, "Curious How Things Work?", "Ask what confusing computer parts actually do.", img_win_chat_q1)
+    add_hover_click(pos_chat_entry, 18, "Curious How Things Work?", "Ask what confusing computer parts actually do.", img_win_chat_q1)
+    add_hold(pos_chat_entry, 18, "Curious How Things Work?", "Ask what confusing computer parts actually do.", img_win_typing2)
+    add_move(pos_chat_entry, pos_send_btn, 30, "Curious How Things Work?", "Ask what confusing computer parts actually do.", img_win_typing2)
+    add_hover_click(pos_send_btn, 18, "Finding an Answer", "Putting it into words that actually make sense.", img_win_typing2)
 
     # Q2 Answer (Reading time: 4.0s)
     q2_read_pos = (win_x + 650, win_y + 480)
-    add_move(pos_send_btn, q2_read_pos, 18, "Relatable Analogies", "Understand your computer concepts through simple, friendly comparisons.", img_win_chat_q2)
-    add_hold(q2_read_pos, 96, "Relatable Analogies", "Understand your computer concepts through simple, friendly comparisons.", img_win_chat_q2)
+    add_move(pos_send_btn, q2_read_pos, 18, "Simple Explanations", "RAM is like a kitchen table: a bigger table gives you more room to work!", img_win_chat_q2)
+    add_hold(q2_read_pos, 96, "Simple Explanations", "RAM is like a kitchen table: a bigger table gives you more room to work!", img_win_chat_q2)
 
     # --- 4. Tab 1: 1-Click Fixes ---
-    add_move(q2_read_pos, pos_tab_fixes, 30, "1-Click Computer Fixes", "Easily fix sound hiccups, restart Wi-Fi, and safely free up disk space.", img_win_chat_q2)
-    add_hover_click(pos_tab_fixes, 18, "1-Click Computer Fixes", "Easily fix sound hiccups, restart Wi-Fi, and safely free up disk space.", img_win_chat_q2)
-    add_hold(pos_tab_fixes, 12, "1-Click Computer Fixes", "Easily fix sound hiccups, restart Wi-Fi, and safely free up disk space.", img_win_fixes)
-    add_move(pos_tab_fixes, pos_run_fix, 30, "1-Click Computer Fixes", "Easily fix sound hiccups, restart Wi-Fi, and safely free up disk space.", img_win_fixes)
-    add_hover_click(pos_run_fix, 18, "Verified Safe Repairs", "One click resolves common system glitches without dangerous terminal commands.", img_win_fixes)
-    add_hold(pos_run_fix, 48, "Verified Safe Repairs", "One click resolves common system glitches without dangerous terminal commands.", img_win_fixes)
+    add_move(q2_read_pos, pos_tab_fixes, 30, "Quick Fixes", "Fix sound glitches, restart Wi-Fi, and clean up junk files with one tap.", img_win_chat_q2)
+    add_hover_click(pos_tab_fixes, 18, "Quick Fixes", "Fix sound glitches, restart Wi-Fi, and clean up junk files with one tap.", img_win_chat_q2)
+    add_hold(pos_tab_fixes, 12, "Quick Fixes", "Fix sound glitches, restart Wi-Fi, and clean up junk files with one tap.", img_win_fixes)
+    add_move(pos_tab_fixes, pos_run_fix, 30, "Quick Fixes", "Fix sound glitches, restart Wi-Fi, and clean up junk files with one tap.", img_win_fixes)
+    add_hover_click(pos_run_fix, 18, "Safe and Simple", "Fixes common hiccups safely, without touching any of your personal files.", img_win_fixes)
+    add_hold(pos_run_fix, 48, "Safe and Simple", "Fixes common hiccups safely, without touching any of your personal files.", img_win_fixes)
 
     # --- 5. Tab 2: Everyday App Installer ---
-    add_move(pos_run_fix, pos_tab_apps, 30, "Everyday App Installer", "Install trusted programs like Chrome, Firefox, VLC, and LibreOffice.", img_win_fixes)
-    add_hover_click(pos_tab_apps, 18, "Everyday App Installer", "Install trusted programs like Chrome, Firefox, VLC, and LibreOffice.", img_win_fixes)
-    add_hold(pos_tab_apps, 12, "Everyday App Installer", "Install trusted programs like Chrome, Firefox, VLC, and LibreOffice.", img_win_apps)
-    add_move(pos_tab_apps, pos_app_btn, 30, "Everyday App Installer", "Install trusted programs like Chrome, Firefox, VLC, and LibreOffice with no bundled adware.", img_win_apps)
-    add_hold(pos_app_btn, 48, "Zero Adware or Bundles", "Direct, official downloads for your favorite browsers and media players.", img_win_apps)
+    add_move(pos_run_fix, pos_tab_apps, 30, "Get Trusted Apps", "Install popular programs like Firefox, Chrome, and VLC in one click.", img_win_fixes)
+    add_hover_click(pos_tab_apps, 18, "Get Trusted Apps", "Install popular programs like Firefox, Chrome, and VLC in one click.", img_win_fixes)
+    add_hold(pos_tab_apps, 12, "Get Trusted Apps", "Install popular programs like Firefox, Chrome, and VLC in one click.", img_win_apps)
+    add_move(pos_tab_apps, pos_app_btn, 30, "Get Trusted Apps", "Install popular programs like Firefox, Chrome, and VLC in one click.", img_win_apps)
+    add_hold(pos_app_btn, 48, "Safe Downloads", "Only the real programs—no ads, popups, or sneaky junk.", img_win_apps)
 
     # --- 6. Tab 3: Scam Help ---
-    add_move(pos_app_btn, pos_tab_scam, 30, "Scam & Fraud Protection", "Clear, calm guidance on fake virus popups, delivery fees, and phone calls.", img_win_apps)
-    add_hover_click(pos_tab_scam, 18, "Scam & Fraud Protection", "Clear, calm guidance on fake virus popups, delivery fees, and phone calls.", img_win_apps)
-    add_hold(pos_tab_scam, 12, "Scam & Fraud Protection", "Clear, calm guidance on fake virus popups, delivery fees, and phone calls.", img_win_scam)
-    add_move(pos_tab_scam, pos_scam_btn, 30, "Scam & Fraud Protection", "Clear, calm guidance on fake virus popups, delivery fees, and phone impersonations.", img_win_scam)
-    add_hold(pos_scam_btn, 48, "Peace of Mind", "Never panic when an unexpected popup or warning appears on your screen.", img_win_scam)
+    add_move(pos_app_btn, pos_tab_scam, 30, "Scam Protection", "Not sure if an email or message is real? Check here first.", img_win_apps)
+    add_hover_click(pos_tab_scam, 18, "Scam Protection", "Not sure if an email or message is real? Check here first.", img_win_apps)
+    add_hold(pos_tab_scam, 12, "Scam Protection", "Not sure if an email or message is real? Check here first.", img_win_scam)
+    add_move(pos_tab_scam, pos_scam_btn, 30, "Scam Protection", "Not sure if an email or message is real? Check here first.", img_win_scam)
+    add_hold(pos_scam_btn, 48, "Spot the Tricks", "Learn how to spot fake virus warnings and phony delivery texts.", img_win_scam)
 
     # --- 7. Tab 4: Safety & Health ---
-    add_move(pos_scam_btn, pos_tab_health, 30, "Guaranteed Safety Guardrails", "Personal Documents and Pictures are permanently protected against deletion.", img_win_scam)
-    add_hover_click(pos_tab_health, 18, "Guaranteed Safety Guardrails", "Personal Documents and Pictures are permanently protected against deletion.", img_win_scam)
-    add_hold(pos_tab_health, 12, "Guaranteed Safety Guardrails", "Personal Documents and Pictures are permanently protected against deletion.", img_win_health)
-    add_move(pos_tab_health, pos_health_btn, 30, "Guaranteed Safety Guardrails", "Personal Documents and Pictures are permanently protected against deletion.", img_win_health)
-    add_hold(pos_health_btn, 48, "System Diagnostics", "Monitor real-time storage, memory, and safety status at a glance.", img_win_health)
+    add_move(pos_scam_btn, pos_tab_health, 30, "Your Files Are Safe", "Your photos, homework, and documents are always protected.", img_win_scam)
+    add_hover_click(pos_tab_health, 18, "Your Files Are Safe", "Your photos, homework, and documents are always protected.", img_win_scam)
+    add_hold(pos_tab_health, 12, "Your Files Are Safe", "Your photos, homework, and documents are always protected.", img_win_health)
+    add_move(pos_tab_health, pos_health_btn, 30, "Your Files Are Safe", "Your photos, homework, and documents are always protected.", img_win_health)
+    add_hold(pos_health_btn, 48, "Computer Checkup", "See how much room and memory your computer has left.", img_win_health)
 
     # --- 8. Senior Zoom & Accessibility ---
-    add_move(pos_health_btn, pos_zoom_in, 30, "Senior Accessibility Mode", "One click instantly enlarges text across the entire application for effortless reading.", img_win_health)
-    add_hover_click(pos_zoom_in, 18, "Senior Accessibility Mode", "One click instantly enlarges text across the entire application for effortless reading.", img_win_health)
-    add_hold(pos_zoom_in, 12, "Senior Accessibility Mode", "One click instantly enlarges text across the entire application for effortless reading.", img_win_zoom)
-    add_move(pos_zoom_in, pos_tab_chat, 24, "Agy Helper", "Free, private, and open-source desktop assistance for everyone.", img_win_zoom)
-    add_hover_click(pos_tab_chat, 18, "Agy Helper", "Free, private, and open-source desktop assistance for everyone.", img_win_zoom)
-    add_hold(pos_tab_chat, 48, "Agy Helper", "Free, private, and open-source desktop assistance for everyone.", img_win_zoom)
+    add_move(pos_health_btn, pos_zoom_in, 30, "Make Words Bigger", "One tap makes the text bigger so it is super easy to read.", img_win_health)
+    add_hover_click(pos_zoom_in, 18, "Make Words Bigger", "One tap makes the text bigger so it is super easy to read.", img_win_health)
+    add_hold(pos_zoom_in, 12, "Make Words Bigger", "One tap makes the text bigger so it is super easy to read.", img_win_zoom)
+    add_move(pos_zoom_in, pos_tab_chat, 24, "Agy Helper", "Free, private, and always here to help you out.", img_win_zoom)
+    add_hover_click(pos_tab_chat, 18, "Agy Helper", "Free, private, and always here to help you out.", img_win_zoom)
+    add_hold(pos_tab_chat, 48, "Agy Helper", "Free, private, and always here to help you out.", img_win_zoom)
 
     total_frames = current_frame
     total_seconds = total_frames / FPS
@@ -449,9 +449,9 @@ def main():
             # Full mascot on desktop with greeting bubble
             frame.paste(mascot_img, (mascot_x, mascot_y + bob_offset), mascot_img)
             draw_d = ImageDraw.Draw(frame)
-            b_box = [mascot_x - 170, mascot_y - 50 + bob_offset, mascot_x + 90, mascot_y + 10 + bob_offset]
+            b_box = [mascot_x - 195, mascot_y - 50 + bob_offset, mascot_x + 90, mascot_y + 10 + bob_offset]
             draw_d.rounded_rectangle(b_box, radius=12, fill=(255, 255, 255, 250), outline=(203, 213, 225, 255), width=2)
-            draw_d.text((b_box[0] + 16, b_box[1] + 18), "Hi! Click me for IT help", fill=(15, 23, 42, 255), font=FONT_SPEECH)
+            draw_d.text((b_box[0] + 16, b_box[1] + 18), "Hi! Click me anytime for help!", fill=(15, 23, 42, 255), font=FONT_SPEECH)
 
         # Interpolate cursor position with smooth cosine easing
         cur_x, cur_y = interpolate_pos(p_start, p_end, seg_progress)
