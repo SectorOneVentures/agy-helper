@@ -65,14 +65,18 @@ For more details, see [PRIVACY.md](PRIVACY.md) and [DISCLAIMER.md](DISCLAIMER.md
 
 ## 📥 Download & Installation
 
-Pre-built binaries for your operating system are available on the [Releases](../../releases) page:
+Pre-built binaries and universal packages are available on the [Releases](https://github.com/SectorOneVentures/agy-helper/releases/latest) page:
 
-- 🪟 **Windows**: Download `AgyHelper-Setup.exe` (or standalone `.exe`)
-- 🍎 **macOS**: Download `AgyHelper.dmg`
-- 🐧 **Linux**: Download standalone binary `AgyHelper` or install via Snap:
+- 🪟 **Windows**: Download [AgyHelper.exe](https://github.com/SectorOneVentures/agy-helper/releases/latest/download/AgyHelper.exe) or [AgyHelper-Windows-x64.zip](https://github.com/SectorOneVentures/agy-helper/releases/latest/download/AgyHelper-Windows-x64.zip)
+- 🍎 **macOS**: Download [AgyHelper-macOS.dmg](https://github.com/SectorOneVentures/agy-helper/releases/latest/download/AgyHelper-macOS.dmg) (compatible with Apple Silicon & Intel)
+- 📦 **Flatpak**: Download [AgyHelper.flatpak](https://github.com/SectorOneVentures/agy-helper/releases/latest/download/AgyHelper.flatpak) and install:
   ```bash
-  sudo snap install agy-helper
+  flatpak install --user AgyHelper.flatpak
   ```
+- 🐧 **Linux**:
+  - Debian / Ubuntu / Mint: [agy-helper_1.0.0_amd64.deb](https://github.com/SectorOneVentures/agy-helper/releases/latest/download/agy-helper_1.0.0_amd64.deb)
+  - Snap: [agy-helper_1.0.0_amd64.snap](https://github.com/SectorOneVentures/agy-helper/releases/latest/download/agy-helper_1.0.0_amd64.snap)
+  - Standalone Binary: [AgyHelper-Linux-x86_64.tar.gz](https://github.com/SectorOneVentures/agy-helper/releases/latest/download/AgyHelper-Linux-x86_64.tar.gz)
 
 ---
 
