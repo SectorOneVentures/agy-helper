@@ -178,16 +178,23 @@ jobs:
       - name: Install GTK3 and Python Dependencies
         run: |
           brew install gtk+3 pygobject3 adwaita-icon-theme create-dmg || true
-          python3 -m pip install --upgrade pip
-          python3 -m pip install pyinstaller pillow
+          python3 -m pip install --upgrade pip --break-system-packages || true
+          python3 -m pip install pyinstaller pillow pyinstaller-hooks-contrib --break-system-packages
 
       - name: Build macOS App Bundle
         run: |
           pyinstaller --clean \
             --windowed \
             --name "AgyHelper" \
-            --icon "assets/icon.png" \
+            --icon "assets/icon.icns" \
             --add-data "assets:assets" \
+            --hidden-import "gi" \
+            --hidden-import "gi.repository.Gtk" \
+            --hidden-import "gi.repository.Gdk" \
+            --hidden-import "gi.repository.GLib" \
+            --hidden-import "gi.repository.GdkPixbuf" \
+            --hidden-import "gi.repository.Pango" \
+            --hidden-import "gi.repository.cairo" \
             main.py
 
       - name: Package into DMG
@@ -203,7 +210,8 @@ jobs:
               "dist/AgyHelper-macOS.dmg" \
               "dist/AgyHelper.app" || true
           fi
-          if [ ! -f "dist/AgyHelper-macOS.dmg" ]; then
+          if [ ! -s "dist/AgyHelper-macOS.dmg" ]; then
+            rm -f "dist/AgyHelper-macOS.dmg"
             hdiutil create -volname "AgyHelper" -srcfolder "dist/AgyHelper.app" -ov -format UDZO "dist/AgyHelper-macOS.dmg"
           fi
 
@@ -218,6 +226,9 @@ jobs:
   # -------------------------------------------------------------
   build-flatpak:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-46
+      options: --privileged
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
