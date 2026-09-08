@@ -1,116 +1,119 @@
-# 🚀 Agy Desktop Companion & IT Helper
+# 🛡️ Agy Helper
+
+**The friendly, stress-free desktop assistant for everyday computer users, families, and seniors.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows%20%7C%20macOS-brightgreen.svg)]()
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)]()
-
-**Agy Helper** is a friendly, accessible, open-source desktop companion and 1-click IT troubleshooter designed for everyday computer users, families, and seniors.
-
-Powered by Google AGY and Gemini AI, Agy Helper turns scary computer error messages and technical maintenance into simple, safe, 1-click actions with zero technical jargon.
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-brightgreen.svg)]()
+[![Privacy](https://img.shields.io/badge/Privacy-Zero%20Data%20Selling-success.svg)](PRIVACY.md)
 
 ---
 
-## ✨ Features
+## 🌟 What is Agy Helper?
 
-- **💬 Warm, Plain-English AI Tech Support**: Ask any computer question (e.g., *"Why is my internet slow?"*, *"What is RAM?"*). Agy answers like a patient, caring family member, avoiding confusing terminal commands and technical jargon.
-- **🛡️ Scam & Fraud Protection**: Dedicated **Scam Help** tab educating users on common scams (fake virus popups, AnyDesk/TeamViewer remote caller traps, fake USPS texts, gift card fraud) with an interactive **Ask Agy to Check a Message** checker and an emergency **Close All Browsers** button.
-- **👓 Senior Visibility Mode (Font Zoom `A-` / `A+`)**: Global font scaling (100%, 115%, 130%, 150%) so seniors and visually impaired users can comfortably read all content.
-- **🔒 Zero-Deletion Safety Engine**: Hardcoded safety barriers guarantee that no script or fix can ever delete or alter files in `~/Documents`, `~/Pictures`, or `~/Music`. All proposed commands are verified before execution.
-- **⚡ 1-Click IT Fixes**: Fix audio/sound hiccups, repair broken packages, free up disk space safely, restart Wi-Fi networking, and clear system caches with a single click.
-- **📦 1-Click App Installer**: Curated catalog of essential everyday applications for families and seniors (Chrome, Firefox, Brave, VLC Media Player, LibreOffice, Spotify, Zoom, Thunderbird) with automatic detection of existing installations and authentic program icons.
-- **🟢 Google AGY Status & Troubleshooter**: Real-time status indicator showing whether Google AGY is connected, complete with an interactive step-by-step troubleshooter for new computers.
-- **🍏 Native iOS / macOS Light Aesthetic**: Modern clean design with backdrop stability ensuring readable white fonts on active tabs and buttons even when unfocused.
+Computers can be confusing and overwhelming. When something stops working, most people are confronted with cryptic error messages, intimidating terminal commands, or deceptive internet popups.
+
+**Agy Helper** is a free, open-source desktop companion powered by Google AGY and Gemini AI. It transforms complicated computer maintenance into **simple, safe, 1-click actions** explained in plain, caring English—like having a patient tech-savvy family member sitting right next to you.
 
 ---
 
-## 🚀 Quick Start (Running from Source)
+## ✨ Key Features
 
-### Prerequisites
+### 💬 1. Ask Agy (Friendly AI Tech Support)
+- Ask any question in everyday language: *"Why is my internet slow?"*, *"How do I print double-sided?"*, or *"What does RAM mean?"*
+- Get warm, patient, jargon-free answers.
+- Never gives confusing terminal commands; safe actions can be tested with a single click.
+
+### ⚡ 2. 1-Click Computer Fixes
+- Fix sound hiccups if audio stops working.
+- Restart Wi-Fi and network adapters with one click.
+- Free up gigabytes of disk space safely without touching your personal photos or documents.
+- Clear temporary system and browser cache files.
+
+### 🛡️ 3. Scam & Fraud Protection
+- **The 3 Golden Rules**: Simple guidance to prevent fraud (e.g., real companies never put phone numbers on your screen or ask for gift cards).
+- **Common Scam Scenarios**: Calm walkthroughs explaining full-screen fake virus popups, fake package delivery texts, and urgent bank transfer calls.
+- **Message Checker**: Paste a suspicious email or text and ask Agy if it looks like a scam.
+- **Close Trapped Browsers**: A single button to safely close stuck browser tabs if a scam website locks your screen.
+
+### 📦 4. 1-Click Everyday App Installer
+- Install essential, trusted everyday programs safely without accidentally downloading adware or search bar junk:
+  - **Web Browsers**: Google Chrome, Mozilla Firefox, Brave
+  - **Media & Entertainment**: VLC Media Player, Spotify
+  - **Productivity & Office**: LibreOffice (Word & Excel compatible)
+  - **Communication**: Zoom Video Meetings, Thunderbird Email
+- Automatically detects which programs you already have installed.
+
+### 👓 5. Senior-Friendly Accessibility
+- Instant text zoom controls (**`A-`** and **`A+`**) right on the top bar.
+- Effortlessly adjust text size (100%, 115%, 130%, 150%) for crystal-clear readability.
+- High-contrast buttons and readable fonts that never turn unreadable gray when switching between windows.
+
+---
+
+## 🔒 Privacy & Safety First
+
+We believe everyday tools must respect user privacy:
+
+1. **Zero Data Selling**: Your personal information, browsing history, and searches are **never** sold, rented, or shared with third-party advertisers or data brokers.
+2. **Your Files Stay Yours**: Personal files (`Documents`, `Pictures`, `Music`, `Desktop`) are permanently protected. The built-in safety engine strictly prohibits any automatic script from altering or deleting your personal files.
+3. **Google Gemini Processing**: AI queries are transmitted securely via encrypted connections directly to Google Gemini solely to answer your technical questions.
+4. **100% Open Source**: Every line of code is public and auditable by anyone under the permissive MIT License.
+
+For more details, see [PRIVACY.md](PRIVACY.md) and [DISCLAIMER.md](DISCLAIMER.md).
+
+---
+
+## 📥 Download & Installation
+
+Pre-built binaries for your operating system are available on the [Releases](../../releases) page:
+
+- 🪟 **Windows**: Download `AgyHelper-Setup.exe` (or standalone `.exe`)
+- 🍎 **macOS**: Download `AgyHelper.dmg`
+- 🐧 **Linux**: Download standalone binary `AgyHelper` or install via Snap:
+  ```bash
+  sudo snap install agy-helper
+  ```
+
+---
+
+## 💻 Running from Source (For Developers)
+
+### Requirements
 - Python 3.10 or higher
 - GTK 3 (`python3-gi`, `gir1.2-gtk-3.0`)
-- Google AGY CLI (Antigravity)
+- Google AGY CLI (`agy`)
 
-### Linux (Ubuntu / Debian / Mint)
+### Quick Setup
 ```bash
-# 1. Install GTK3 dependencies
-sudo apt update
-sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0 libgirepository1.0-dev
-
-# 2. Clone repository
+# 1. Clone the repository
 git clone https://github.com/your-username/agy-helper.git
 cd agy-helper
+
+# 2. Install dependencies (Debian/Ubuntu/Mint)
+sudo apt update && sudo apt install -y python3-gi gir1.2-gtk-3.0
 
 # 3. Launch Agy Helper
 python3 main.py --open-window
 ```
 
----
+<details>
+<summary><b>🛠️ Building Standalone Binaries</b></summary>
 
-## 📦 Multi-Platform Packaging
-
-### 🐧 Linux Snap Package
-Agy Helper includes a full `snapcraft.yaml` configuration.
-```bash
-# Build the snap package
-snapcraft
-
-# Install locally
-sudo snap install agy-helper_*.snap --dangerous
-```
-Or build a standalone Linux binary using PyInstaller:
-```bash
-bash scripts/build_linux.sh
-```
-
-### 🪟 Windows Executable (.exe)
-Build a standalone single-file Windows executable:
-```cmd
-scripts\build_windows.bat
-```
-*(Requires Python for Windows and PyInstaller. Output executable will be in `dist/AgyHelper.exe`)*
-
-### 🍎 macOS Application Bundle (.app & .dmg)
-Build the macOS application bundle and DMG image:
-```bash
-bash scripts/build_mac.sh
-```
-*(Requires macOS and `create-dmg` or PyInstaller)*
+- **Linux**: `pyinstaller --clean agy_helper.spec` (Output in `dist/AgyHelper`)
+- **Windows**: Run `scripts\build_windows.bat`
+- **macOS**: Run `bash scripts/build_mac.sh`
+</details>
 
 ---
 
-## 🛡️ Privacy, Security & Google Gemini Integration
+## ⚖️ Legal & Trademarks
 
-Agy Helper is built from the ground up with a strict privacy-first architecture:
-- **Zero 3rd-Party Advertiser Sharing**: No personal information, search queries, or browsing history is ever sold, tracked, or shared with third-party advertisers or data brokers.
-- **How Google Gemini is Used**: When you type a question in the AI Chat tab, only the specific technical prompt and basic operating system context are sent to Google Gemini (Gemini 3.7 Flash) to formulate an answer.
-- **Your Personal Files Never Leave Your Machine**: Private documents, family photos, passwords, and music are never uploaded or inspected.
-- **Hardcoded Local Safety Engine**: Built-in rules in [safety_engine.py](safety_engine.py) permanently prohibit deleting files in personal directories (`~/Documents`, `~/Pictures`, `~/Music`).
-- **Complete Privacy Statement**: Read our full [PRIVACY.md](PRIVACY.md) document for complete transparency.
-- **Security Policy**: See [SECURITY.md](SECURITY.md) for vulnerability reporting guidelines.
-- **Legal Disclaimers**: Review [DISCLAIMER.md](DISCLAIMER.md) for AI guidance terms, scam education limits, and liability disclaimers.
+Agy Helper is an independent open-source project and is **not affiliated with, sponsored by, or endorsed by Google LLC, Microsoft Corporation, Apple Inc., Mozilla Corporation, Brave Software, VideoLAN, The Document Foundation, Spotify AB, or Zoom Video Communications**.
 
----
-
-## ⚖️ Trademarks & Nominative Fair Use
-
-Agy Helper is an independent, community-driven open-source project and is **not affiliated with, sponsored by, or endorsed by Google LLC, Alphabet Inc., Mozilla Corporation, Brave Software, VideoLAN, The Document Foundation, Spotify AB, Zoom Video Communications, or Microsoft Corporation**.
-
-All product names, logos, and brands (such as Google Chrome, Mozilla Firefox, Brave, VLC, LibreOffice, Spotify, Zoom, and Thunderbird) are property of their respective trademark owners. Their inclusion in Agy Helper is strictly for nominative fair use to identify software available for user installation.
-
----
-
-## 🤝 Contributing
-
-Contributions from the open-source community are welcome!
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+All brand names and logos are property of their respective owners and are referenced solely for nominative identification.
 
 ---
 
 ## 📄 License
 
-Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
-Review [DISCLAIMER.md](DISCLAIMER.md) for liability and AI terms.
+Distributed under the open-source **MIT License**. See [LICENSE](LICENSE) for details.
