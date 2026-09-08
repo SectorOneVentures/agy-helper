@@ -8,19 +8,20 @@ We believe that computer help should be simple, transparent, and completely resp
 
 ---
 
-## 1. Zero Third-Party Information Sharing
+## 1. Zero Third-Party Advertising or Broker Sharing
 
-- **No Sale or Sharing of Personal Data**: We do not sell, rent, monetize, or transmit your personal information, search queries, chat logs, or browsing activity to any third-party advertisers, data brokers, or marketing networks.
+- **No Sale or Monetization of Data**: We do not sell, rent, monetize, or share your personal information, search queries, chat logs, or browsing activity with ANY third-party advertisers, data brokers, or marketing networks.
 - **Zero Telemetry & Tracking**: Agy Helper contains **no background analytics frameworks, tracking cookies, advertising beacons, or telemetry probes**.
 - **Local-Only Metrics**: All system health information (RAM usage, storage capacity, system uptime, and protected folder statuses) is read directly by your local operating system and is never uploaded anywhere.
 
 ---
 
-## 2. How the Google Gemini AI Connection Works
+## 2. Technical Support Processing via Google Gemini AI
 
-To provide patient, warm, plain-English answers to your technical questions, Agy Helper connects to **Google Gemini** (specifically the Gemini 3.7 Flash model) through the official local Google AGY engine:
+To provide patient, warm, plain-English answers to your technical questions, Agy Helper connects to **Google Gemini** (Gemini 3.7 Flash) through the local Google AGY engine:
 
-- **What is Sent**: When you ask a question in the "Ask Agy" chat tab, only the specific text prompt you enter and basic, non-sensitive environment metadata (such as your Linux OS distribution name) are transmitted to Google's Gemini API so it can formulate an accurate solution.
+- **What is Sent**: When you choose to submit a question in the "Ask Agy" chat tab, only the specific text prompt you enter and basic, non-sensitive environment metadata (such as your Linux OS distribution name) are transmitted to Google's Gemini API endpoints to formulate an accurate troubleshooting answer.
+- **Service Provider Processing**: Google processes your submitted troubleshooting prompts strictly to generate AI responses in accordance with Google's Gemini API Terms and Privacy Policy.
 - **What is NEVER Sent**: Agy Helper **never** accesses, inspects, uploads, or shares your personal files, private documents, family photos, music library, saved passwords, web browsing cookies, or keyboard keystrokes.
 - **Encrypted in Transit**: All API communications with Google's Gemini AI endpoints are encrypted using industry-standard TLS / HTTPS encryption.
 

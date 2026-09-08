@@ -69,6 +69,9 @@ DANGEROUS_SYSTEM_PATTERNS = [
     r"\bchown\s+(-R\s+)?.*\s+/",
     r"\brm\s+-[rfRF]{1,4}\s+/\s*$",
     r"\brm\s+-[rfRF]{1,4}\s+/\*",
+    r"\|\s*(ba)?sh\b",                 # Piped execution into shell (e.g. curl ... | bash)
+    r"\bbase64\s+(-d|--decode)\b",    # Obfuscated base64 payload execution
+    r"\beval\s+",                     # Dynamic eval execution
 ]
 
 def is_path_under_dir(target_path: str, parent_dir: str) -> bool:

@@ -81,11 +81,21 @@ bash scripts/build_mac.sh
 ## 🛡️ Privacy, Security & Google Gemini Integration
 
 Agy Helper is built from the ground up with a strict privacy-first architecture:
-- **Zero 3rd-Party Data Sharing**: No personal information, search queries, or browsing history is ever sold, tracked, or shared with third-party advertisers or data brokers.
+- **Zero 3rd-Party Advertiser Sharing**: No personal information, search queries, or browsing history is ever sold, tracked, or shared with third-party advertisers or data brokers.
 - **How Google Gemini is Used**: When you type a question in the AI Chat tab, only the specific technical prompt and basic operating system context are sent to Google Gemini (Gemini 3.7 Flash) to formulate an answer.
 - **Your Personal Files Never Leave Your Machine**: Private documents, family photos, passwords, and music are never uploaded or inspected.
 - **Hardcoded Local Safety Engine**: Built-in rules in [safety_engine.py](safety_engine.py) permanently prohibit deleting files in personal directories (`~/Documents`, `~/Pictures`, `~/Music`).
 - **Complete Privacy Statement**: Read our full [PRIVACY.md](PRIVACY.md) document for complete transparency.
+- **Security Policy**: See [SECURITY.md](SECURITY.md) for vulnerability reporting guidelines.
+- **Legal Disclaimers**: Review [DISCLAIMER.md](DISCLAIMER.md) for AI guidance terms, scam education limits, and liability disclaimers.
+
+---
+
+## ⚖️ Trademarks & Nominative Fair Use
+
+Agy Helper is an independent, community-driven open-source project and is **not affiliated with, sponsored by, or endorsed by Google LLC, Alphabet Inc., Mozilla Corporation, Brave Software, VideoLAN, The Document Foundation, Spotify AB, Zoom Video Communications, or Microsoft Corporation**.
+
+All product names, logos, and brands (such as Google Chrome, Mozilla Firefox, Brave, VLC, LibreOffice, Spotify, Zoom, and Thunderbird) are property of their respective trademark owners. Their inclusion in Agy Helper is strictly for nominative fair use to identify software available for user installation.
 
 ---
 
@@ -103,3 +113,4 @@ Contributions from the open-source community are welcome!
 ## 📄 License
 
 Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
+Review [DISCLAIMER.md](DISCLAIMER.md) for liability and AI terms.
