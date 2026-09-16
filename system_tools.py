@@ -19,6 +19,7 @@ def get_app_catalog() -> List[Dict[str, Any]]:
                 "id": "chrome",
                 "name": "Google Chrome",
                 "category": "Web Browser",
+                "source": "Microsoft Store / Verified Windows Package",
                 "description": "Fast, simple, and secure web browser for everyday browsing.",
                 "icon": "chrome",
                 "fallback_icon": "google-chrome",
@@ -35,6 +36,7 @@ def get_app_catalog() -> List[Dict[str, Any]]:
                 "id": "firefox",
                 "name": "Mozilla Firefox",
                 "category": "Web Browser",
+                "source": "Microsoft Store / Verified Windows Package",
                 "description": "Safe, reliable web browser for everyday internet use.",
                 "icon": "firefox",
                 "fallback_icon": "firefox",
@@ -50,6 +52,7 @@ def get_app_catalog() -> List[Dict[str, Any]]:
                 "id": "brave",
                 "name": "Brave Browser",
                 "category": "Web Browser",
+                "source": "Microsoft Store / Verified Windows Package",
                 "description": "Fast web browser with built-in ad blocker to stop annoying popups.",
                 "icon": "brave",
                 "fallback_icon": "brave-browser",
@@ -65,6 +68,7 @@ def get_app_catalog() -> List[Dict[str, Any]]:
                 "id": "vlc",
                 "name": "VLC Media Player",
                 "category": "Media Player",
+                "source": "Microsoft Store / Verified Windows Package",
                 "description": "Easily plays movies, home videos, music files, and DVDs.",
                 "icon": "vlc",
                 "fallback_icon": "vlc",
@@ -80,6 +84,7 @@ def get_app_catalog() -> List[Dict[str, Any]]:
                 "id": "libreoffice",
                 "name": "LibreOffice Suite",
                 "category": "Office & Documents",
+                "source": "Microsoft Store / Verified Windows Package",
                 "description": "Complete office program for writing letters, documents, and spreadsheets.",
                 "icon": "libreoffice",
                 "fallback_icon": "libreoffice-main",
@@ -95,11 +100,13 @@ def get_app_catalog() -> List[Dict[str, Any]]:
                 "id": "spotify",
                 "name": "Spotify Music",
                 "category": "Music & Audio",
-                "description": "Listen to your favorite songs, music artists, and podcasts.",
+                "source": "Official Microsoft Store App",
+                "description": "Listen to your favorite songs, music artists, and podcasts directly from Microsoft Store.",
                 "icon": "spotify",
                 "fallback_icon": "spotify-client",
                 "check_paths": [
                     os.path.expandvars(r"%APPDATA%\Spotify\Spotify.exe"),
+                    os.path.expandvars(r"%LOCALAPPDATA%\Microsoft\WindowsApps\Spotify.exe"),
                 ],
                 "check_cmd": "where spotify.exe 2>nul",
                 "launch_cmd": 'start "" "spotify"',
@@ -109,6 +116,7 @@ def get_app_catalog() -> List[Dict[str, Any]]:
                 "id": "zoom",
                 "name": "Zoom Video Meetings",
                 "category": "Video Calls",
+                "source": "Microsoft Store / Verified Windows Package",
                 "description": "Video calls and meetings with family, friends, and telehealth doctors.",
                 "icon": "zoom",
                 "fallback_icon": "zoom",
@@ -124,6 +132,7 @@ def get_app_catalog() -> List[Dict[str, Any]]:
                 "id": "thunderbird",
                 "name": "Thunderbird Email",
                 "category": "Email & Messages",
+                "source": "Microsoft Store / Verified Windows Package",
                 "description": "Easy, clean desktop email program for reading and sending email.",
                 "icon": "thunderbird",
                 "fallback_icon": "thunderbird",
@@ -548,6 +557,30 @@ def check_app_installed(app_or_cmd: Any) -> bool:
         return res.returncode == 0
     except Exception:
         return False
+
+def check_windows_app_installer() -> tuple:
+    """
+    Checks if Windows App Installer (winget) is installed and available.
+    Returns (is_available: bool, version_or_message: str).
+    """
+    if not sys.platform.startswith("win"):
+        return False, "Not running on Windows."
+
+    try:
+        res = subprocess.run(
+            ["winget", "--version"],
+            capture_output=True,
+            text=True,
+            shell=True,
+            env=get_system_env(),
+            timeout=5
+        )
+        if res.returncode == 0:
+            ver = res.stdout.strip()
+            return True, f"Windows App Installer is active ({ver})"
+        return False, "Windows App Installer not found"
+    except Exception as e:
+        return False, f"Windows App Installer check failed: {e}"
 
 def get_system_health() -> Dict[str, Any]:
     """Gathers real-time system metrics for the UI."""

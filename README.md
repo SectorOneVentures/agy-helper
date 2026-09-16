@@ -35,13 +35,14 @@ Computers can be confusing and overwhelming. When something stops working, most 
 - **Message Checker**: Paste a suspicious email or text and ask Agy if it looks like a scam.
 - **Close Trapped Browsers**: A single button to safely close stuck browser tabs if a scam website locks your screen.
 
-### 📦 4. 1-Click Everyday App Installer
+### 📦 4. 1-Click Everyday App Installer (Microsoft Store & Windows Apps)
 - Install essential, trusted everyday programs safely without accidentally downloading adware or search bar junk:
   - **Web Browsers**: Google Chrome, Mozilla Firefox, Brave
-  - **Media & Entertainment**: VLC Media Player, Spotify
+  - **Media & Entertainment**: VLC Media Player, Spotify (Official Microsoft Store)
   - **Productivity & Office**: LibreOffice (Word & Excel compatible)
   - **Communication**: Zoom Video Meetings, Thunderbird Email
-- Automatically detects which programs you already have installed.
+- **Direct Microsoft Store Integration**: On Windows, apps are retrieved directly from the official **Microsoft Store** and Windows Package Manager (`winget`). Every package is verified, digitally signed, and clean.
+- **Built-in App Installer Assistance**: Easily test or update your Windows App Installer directly from the Microsoft Store with a single click.
 
 ### 👓 5. Senior-Friendly Accessibility
 - Instant text zoom controls (**`A-`** and **`A+`**) right on the top bar.
@@ -67,7 +68,8 @@ For more details, see [PRIVACY.md](PRIVACY.md) and [DISCLAIMER.md](DISCLAIMER.md
 
 Pre-built binaries and universal packages are available on the [Releases](https://github.com/SectorOneVentures/agy-helper/releases/latest) page:
 
-- 🪟 **Windows**: Download [AgyHelper.exe](https://github.com/SectorOneVentures/agy-helper/releases/latest/download/AgyHelper.exe) or [AgyHelper-Windows-x64.zip](https://github.com/SectorOneVentures/agy-helper/releases/latest/download/AgyHelper-Windows-x64.zip)
+- 🪟 **Windows**: Download [AgyHelper-Windows-x64.zip](https://github.com/SectorOneVentures/agy-helper/releases/latest/download/AgyHelper-Windows-x64.zip) or standalone [AgyHelper.exe](https://github.com/SectorOneVentures/agy-helper/releases/latest/download/AgyHelper.exe)
+  - **Includes Proper Signing Package**: Extract the zip and run **`Setup-AgyHelper.bat`** (or **`Install-Certificate.bat`**) as Administrator to install the code signing certificate into your Windows Trusted store for zero-warning execution. See [Windows Installation Guide](AGY-Windows-Version/agy-helper-1.0.0-windows-x64/INSTALL-WINDOWS.md).
 - 🍎 **macOS**: Download [AgyHelper-macOS.dmg](https://github.com/SectorOneVentures/agy-helper/releases/latest/download/AgyHelper-macOS.dmg) (compatible with Apple Silicon & Intel)
 - 📦 **Flatpak**: Download [AgyHelper.flatpak](https://github.com/SectorOneVentures/agy-helper/releases/latest/download/AgyHelper.flatpak) and install:
   ```bash

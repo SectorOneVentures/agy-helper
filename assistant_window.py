@@ -20,6 +20,7 @@ from system_tools import (
     APP_CATALOG,
     QUICK_FIXES,
     check_app_installed,
+    check_windows_app_installer,
     get_system_health,
     run_command_safe_async,
     launch_app_async,
@@ -676,10 +677,41 @@ class AssistantWindow(Gtk.Window):
         vbox.set_margin_top(16)
         vbox.set_margin_bottom(16)
 
-        lbl_desc = Gtk.Label(label="Manage and launch applications with a single click. Verified safe and easy.")
+        lbl_desc = Gtk.Label(label="Manage and launch applications with a single click. Verified safe, clean, and easy.")
         lbl_desc.get_style_context().add_class("header-subtitle")
         lbl_desc.set_xalign(0)
         vbox.pack_start(lbl_desc, False, False, 0)
+
+        # Windows-specific Microsoft Store & App Installer banner
+        if sys.platform.startswith("win"):
+            win_banner = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=14)
+            win_banner.get_style_context().add_class("ios-card")
+
+            icon_store = Gtk.Label()
+            icon_store.set_markup("<span font='24'>🏪</span>")
+            win_banner.pack_start(icon_store, False, False, 4)
+
+            banner_text_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
+            lbl_banner_title = Gtk.Label()
+            lbl_banner_title.set_markup("<b>Verified Windows Apps &amp; Microsoft Store Integration</b>")
+            lbl_banner_title.set_xalign(0)
+            lbl_banner_desc = Gtk.Label(
+                label="Applications are installed safely through Windows App Installer and the official Microsoft Store catalog. 100% verified, clean software with zero adware or deceptive popups."
+            )
+            lbl_banner_desc.set_line_wrap(True)
+            lbl_banner_desc.set_xalign(0)
+            lbl_banner_desc.get_style_context().add_class("header-subtitle")
+            banner_text_box.pack_start(lbl_banner_title, False, False, 0)
+            banner_text_box.pack_start(lbl_banner_desc, False, False, 0)
+            win_banner.pack_start(banner_text_box, True, True, 0)
+
+            btn_help_installer = Gtk.Button(label="ℹ️ Help with App Installer")
+            btn_help_installer.set_valign(Gtk.Align.CENTER)
+            btn_help_installer.get_style_context().add_class("ios-btn-secondary")
+            btn_help_installer.connect("clicked", lambda b: self._show_windows_installer_help())
+            win_banner.pack_end(btn_help_installer, False, False, 0)
+
+            vbox.pack_start(win_banner, False, False, 0)
 
         self.app_buttons = {}
 
@@ -695,7 +727,8 @@ class AssistantWindow(Gtk.Window):
             lbl_name = Gtk.Label(label=app["name"])
             lbl_name.get_style_context().add_class("header-title")
             lbl_name.set_xalign(0)
-            lbl_desc_app = Gtk.Label(label=f"[{app['category']}] {app['description']}")
+            source_tag = f" • {app['source']}" if "source" in app else ""
+            lbl_desc_app = Gtk.Label(label=f"[{app['category']}{source_tag}] {app['description']}")
             lbl_desc_app.set_line_wrap(True)
             lbl_desc_app.set_xalign(0)
             lbl_desc_app.get_style_context().add_class("header-subtitle")
@@ -724,6 +757,116 @@ class AssistantWindow(Gtk.Window):
         self.apps_scroll.add(vbox)
         return self.apps_scroll
 
+    def _show_windows_installer_help(self):
+        """Displays friendly guidance and quick links for Windows App Installer & Microsoft Store."""
+        dialog = Gtk.Dialog(
+            title="Help with Windows App Installer",
+            parent=self,
+            flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT
+        )
+        dialog.set_default_size(560, 480)
+        content = dialog.get_content_area()
+        content.set_spacing(16)
+        content.set_margin_start(24)
+        content.set_margin_end(24)
+        content.set_margin_top(20)
+        content.set_margin_bottom(20)
+
+        # Header card
+        head_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=14)
+        head_box.get_style_context().add_class("ios-card")
+        icon_lbl = Gtk.Label()
+        icon_lbl.set_markup("<span font='28'>📦</span>")
+        head_box.pack_start(icon_lbl, False, False, 4)
+
+        head_text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        title = Gtk.Label()
+        title.set_markup("<b>Windows App Installer &amp; Microsoft Store</b>")
+        title.set_xalign(0)
+        subtitle = Gtk.Label(
+            label="How Agy Helper safely installs genuine Windows applications directly from Microsoft Store and verified software publishers without browser popups or deceptive download sites."
+        )
+        subtitle.set_line_wrap(True)
+        subtitle.set_xalign(0)
+        subtitle.get_style_context().add_class("header-subtitle")
+        head_text.pack_start(title, False, False, 0)
+        head_text.pack_start(subtitle, False, False, 0)
+        head_box.pack_start(head_text, True, True, 0)
+        content.pack_start(head_box, False, False, 0)
+
+        # Explanation Card
+        info_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        info_box.get_style_context().add_class("ios-card")
+
+        step1_title = Gtk.Label()
+        step1_title.set_markup("<b>🏪 Microsoft Store &amp; Windows Package Catalog</b>")
+        step1_title.set_xalign(0)
+        step1_desc = Gtk.Label(
+            label="Agy Helper uses Microsoft's official Windows App Installer (winget) to retrieve programs directly from the official Microsoft Store and verified software publishers. You never need to search online or risk clicking dangerous fake download links."
+        )
+        step1_desc.set_line_wrap(True)
+        step1_desc.set_xalign(0)
+        info_box.pack_start(step1_title, False, False, 0)
+        info_box.pack_start(step1_desc, False, False, 0)
+
+        step2_title = Gtk.Label()
+        step2_title.set_markup("<b>❓ What if an app won't install?</b>")
+        step2_title.set_xalign(0)
+        step2_desc = Gtk.Label(
+            label="If an installation doesn't start, your computer's built-in 'App Installer' may need a quick, free update from the Microsoft Store. Click the button below to open the Microsoft Store and update App Installer with 1 click."
+        )
+        step2_desc.set_line_wrap(True)
+        step2_desc.set_xalign(0)
+        info_box.pack_start(step2_title, False, False, 0)
+        info_box.pack_start(step2_desc, False, False, 0)
+
+        content.pack_start(info_box, False, False, 0)
+
+        # Action Buttons
+        btn_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+
+        btn_store = Gtk.Button(label="🛍️ Open App Installer in Microsoft Store")
+        btn_store.get_style_context().add_class("ios-btn-primary")
+        def _open_store(b):
+            try:
+                webbrowser.open("ms-windows-store://pdp/?productid=9nblggh4nns1")
+            except Exception:
+                webbrowser.open("https://apps.microsoft.com/detail/9nblggh4nns1")
+        btn_store.connect("clicked", _open_store)
+        btn_box.pack_start(btn_store, True, True, 0)
+
+        btn_web = Gtk.Button(label="🌐 Microsoft Web Store")
+        btn_web.get_style_context().add_class("ios-btn-secondary")
+        btn_web.connect("clicked", lambda b: webbrowser.open("https://apps.microsoft.com/detail/9nblggh4nns1"))
+        btn_box.pack_start(btn_web, True, True, 0)
+
+        content.pack_start(btn_box, False, False, 0)
+
+        # Status check
+        status_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        lbl_status = Gtk.Label(label="Checking Windows App Installer status...")
+        lbl_status.set_xalign(0)
+        status_box.pack_start(lbl_status, True, True, 0)
+
+        btn_check = Gtk.Button(label="🔄 Test App Installer")
+        btn_check.get_style_context().add_class("ios-btn-secondary")
+        def _test_installer(b):
+            avail, msg = check_windows_app_installer()
+            if avail:
+                lbl_status.set_markup(f"<span color='#107C41'><b>🟢 {msg}</b></span>")
+            else:
+                lbl_status.set_markup(f"<span color='#D83B01'><b>⚠️ {msg} — please update via Microsoft Store above.</b></span>")
+        btn_check.connect("clicked", _test_installer)
+        status_box.pack_end(btn_check, False, False, 0)
+        content.pack_start(status_box, False, False, 0)
+
+        # Initial test check
+        GLib.idle_add(lambda: _test_installer(None))
+
+        dialog.add_button("Close", Gtk.ResponseType.CLOSE)
+        dialog.connect("response", lambda d, r: d.destroy())
+        dialog.show_all()
+
     def _install_app(self, app_info: dict, btn_widget: Gtk.Button):
         btn_widget.set_sensitive(False)
         btn_widget.set_label("Installing...")
@@ -747,6 +890,11 @@ class AssistantWindow(Gtk.Window):
                 btn.get_style_context().remove_class("ios-btn-open-green")
                 btn.get_style_context().add_class("ios-btn-primary")
                 btn.set_sensitive(True)
+                if sys.platform.startswith("win"):
+                    self._add_message_bubble(
+                        f"⚠️ **Note on installing {app['name']}:** If the install didn't complete, Windows App Installer may need a quick update from the Microsoft Store. Click **Help with App Installer** in the App tab to update it.",
+                        is_user=False
+                    )
 
     # -------------------------------------------------------------
     # Zoom Controls (Senior Accessibility)

@@ -150,13 +150,25 @@ jobs:
             mingw-w64-x86_64-gcc
             zip
 
-      - name: Build Windows Executable
+      - name: Build Windows Executable & Package Signing Suite
         shell: msys2 {0}
         run: |
           python3 -m pip install pyinstaller pillow
           pyinstaller --clean agy_helper.spec
           cd dist
-          zip -r AgyHelper-Windows-x64.zip AgyHelper.exe || true
+          if [ -f ../AGY-Windows-Version/agy-helper-1.0.0-windows-x64/AgyHelper.exe ]; then
+            echo "Packaging pre-signed Windows binary..."
+            cp ../AGY-Windows-Version/agy-helper-1.0.0-windows-x64/AgyHelper.exe .
+          fi
+          cp ../AGY-Windows-Version/AgyHelper-Certificate.cer . || true
+          cp ../AGY-Windows-Version/agy-helper-1.0.0-windows-x64/Install-Certificate.bat . || true
+          cp ../AGY-Windows-Version/agy-helper-1.0.0-windows-x64/Install-Certificate.ps1 . || true
+          cp ../AGY-Windows-Version/agy-helper-1.0.0-windows-x64/Setup-AgyHelper.bat . || true
+          cp ../AGY-Windows-Version/agy-helper-1.0.0-windows-x64/INSTALL-WINDOWS.md . || true
+          cp ../AGY-Windows-Version/agy-helper-1.0.0-windows-x64/README.md . || true
+          cp ../AGY-Windows-Version/agy-helper-1.0.0-windows-x64/LICENSE . || true
+          cp ../AGY-Windows-Version/agy-helper-1.0.0-windows-x64/DISCLAIMER.md . || true
+          zip -9 -r AgyHelper-Windows-x64.zip * || true
 
       - name: Upload Windows Artifacts
         uses: actions/upload-artifact@v4
@@ -165,6 +177,7 @@ jobs:
           path: |
             dist/AgyHelper.exe
             dist/AgyHelper-Windows-x64.zip
+            dist/AgyHelper-Certificate.cer
 
   # -------------------------------------------------------------
   # 3. macOS BUILD (.app & .dmg)
