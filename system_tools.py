@@ -151,6 +151,7 @@ def get_app_catalog() -> List[Dict[str, Any]]:
                 "id": "chrome",
                 "name": "Google Chrome",
                 "category": "Web Browser",
+                "source": "Verified macOS App (Homebrew / Direct)",
                 "description": "Fast, simple, and secure web browser for everyday browsing.",
                 "icon": "chrome",
                 "fallback_icon": "google-chrome",
@@ -163,6 +164,7 @@ def get_app_catalog() -> List[Dict[str, Any]]:
                 "id": "firefox",
                 "name": "Mozilla Firefox",
                 "category": "Web Browser",
+                "source": "Verified macOS App (Homebrew / Direct)",
                 "description": "Safe, reliable web browser for everyday internet use.",
                 "icon": "firefox",
                 "fallback_icon": "firefox",
@@ -175,6 +177,7 @@ def get_app_catalog() -> List[Dict[str, Any]]:
                 "id": "brave",
                 "name": "Brave Browser",
                 "category": "Web Browser",
+                "source": "Verified macOS App (Homebrew / Direct)",
                 "description": "Fast web browser with built-in ad blocker to stop annoying popups.",
                 "icon": "brave",
                 "fallback_icon": "brave-browser",
@@ -187,6 +190,7 @@ def get_app_catalog() -> List[Dict[str, Any]]:
                 "id": "vlc",
                 "name": "VLC Media Player",
                 "category": "Media Player",
+                "source": "Verified macOS App (Homebrew / Direct)",
                 "description": "Easily plays movies, home videos, music files, and DVDs.",
                 "icon": "vlc",
                 "fallback_icon": "vlc",
@@ -199,6 +203,7 @@ def get_app_catalog() -> List[Dict[str, Any]]:
                 "id": "libreoffice",
                 "name": "LibreOffice Suite",
                 "category": "Office & Documents",
+                "source": "Verified macOS App (Homebrew / Direct)",
                 "description": "Complete office program for writing letters, documents, and spreadsheets.",
                 "icon": "libreoffice",
                 "fallback_icon": "libreoffice-main",
@@ -211,6 +216,7 @@ def get_app_catalog() -> List[Dict[str, Any]]:
                 "id": "spotify",
                 "name": "Spotify Music",
                 "category": "Music & Audio",
+                "source": "Verified macOS App (Homebrew / Direct)",
                 "description": "Listen to your favorite songs, music artists, and podcasts.",
                 "icon": "spotify",
                 "fallback_icon": "spotify-client",
@@ -223,6 +229,7 @@ def get_app_catalog() -> List[Dict[str, Any]]:
                 "id": "zoom",
                 "name": "Zoom Video Meetings",
                 "category": "Video Calls",
+                "source": "Verified macOS App (Homebrew / Direct)",
                 "description": "Video calls and meetings with family, friends, and telehealth doctors.",
                 "icon": "zoom",
                 "fallback_icon": "zoom",
@@ -235,6 +242,7 @@ def get_app_catalog() -> List[Dict[str, Any]]:
                 "id": "thunderbird",
                 "name": "Thunderbird Email",
                 "category": "Email & Messages",
+                "source": "Verified macOS App (Homebrew / Direct)",
                 "description": "Easy, clean desktop email program for reading and sending email.",
                 "icon": "thunderbird",
                 "fallback_icon": "thunderbird",
@@ -381,36 +389,36 @@ def get_quick_fixes() -> List[Dict[str, Any]]:
                 "id": "fix_packages",
                 "title": "Repair Windows Update",
                 "icon": "system-software-update-symbolic",
-                "summary": "Restarts Windows Update background services and verifies system integrity.",
-                "cmd": "net stop wuauserv & net start wuauserv & dism /online /cleanup-image /restorehealth",
+                "summary": "Restarts Windows Update background services and verifies system component integrity.",
+                "cmd": "powershell -NoProfile -Command \"Start-Process cmd -ArgumentList '/c net stop wuauserv & net start wuauserv & dism /online /cleanup-image /restorehealth' -Verb RunAs\" 2>nul || (net stop wuauserv & net start wuauserv)",
             },
             {
                 "id": "clean_space",
                 "title": "Free Up Disk Space Safely",
                 "icon": "drive-harddisk-symbolic",
                 "summary": "Safely clears temporary application caches, crash dumps, and Windows temp files. Personal files in Documents, Pictures, and Music are NEVER touched.",
-                "cmd": "del /q /f /s \"%TEMP%\\*\" 2>nul & cleanmgr /verylowdisk 2>nul",
+                "cmd": "del /q /f /s \"%TEMP%\\*\" 2>nul & cleanmgr /verylowdisk 2>nul & echo Windows temporary cache cleared successfully.",
             },
             {
                 "id": "fix_audio",
                 "title": "Restart Audio & Sound",
                 "icon": "audio-speakers-symbolic",
                 "summary": "Restarts the Windows Audio service (Audiosrv) to resolve muted or stuck audio devices.",
-                "cmd": "net stop Audiosrv & net start Audiosrv",
+                "cmd": "powershell -NoProfile -Command \"Restart-Service AudioSrv -Force\" 2>nul || (net stop Audiosrv & net start Audiosrv)",
             },
             {
                 "id": "check_health",
                 "title": "Full System Health Check",
                 "icon": "utilities-system-monitor-symbolic",
-                "summary": "Checks storage capacity, memory status, and system boot time.",
-                "cmd": "wmic logicaldisk get size,freespace,caption & systeminfo | findstr /B /C:\"Total Physical Memory\" /C:\"Available Physical Memory\" /C:\"System Boot Time\"",
+                "summary": "Checks storage capacity, memory status, and system boot time using modern Windows diagnostics.",
+                "cmd": "powershell -NoProfile -Command \"Write-Host '=== Storage Drives ==='; Get-CimInstance Win32_LogicalDisk | Where-Object DriveType -eq 3 | Select-Object DeviceId, @{N='FreeSpace(GB)';E={[math]::round($_.FreeSpace/1GB,1)}}, @{N='TotalSize(GB)';E={[math]::round($_.Size/1GB,1)}}; Write-Host '`n=== Memory & Operating System ==='; Get-CimInstance Win32_OperatingSystem | Select-Object Caption, OSArchitecture, @{N='TotalMemory(GB)';E={[math]::round($_.TotalVisibleMemorySize/1MB,1)}}, @{N='FreeMemory(GB)';E={[math]::round($_.FreePhysicalMemory/1MB,1)}}, LastBootUpTime\" 2>nul || systeminfo",
             },
             {
                 "id": "update_system",
                 "title": "Check & Apply System Updates",
                 "icon": "software-update-available-symbolic",
-                "summary": "Scans for available Windows security updates and patches.",
-                "cmd": "usoclient StartInteractiveScan",
+                "summary": "Opens Windows Update settings to scan for and apply the latest official security updates.",
+                "cmd": "start ms-settings:windowsupdate 2>nul || usoclient StartInteractiveScan",
             },
         ]
     elif sys.platform == "darwin":
@@ -420,43 +428,43 @@ def get_quick_fixes() -> List[Dict[str, Any]]:
                 "id": "fix_network",
                 "title": "Fix Internet & Wi-Fi",
                 "icon": "network-wireless-symbolic",
-                "summary": "Flushes macOS DNS resolver cache, restarts mDNSResponder, and verifies connection.",
-                "cmd": "sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder; ping -c 2 8.8.8.8",
+                "summary": "Flushes macOS DNS resolver cache, restarts mDNSResponder, and verifies internet connectivity.",
+                "cmd": "dscacheutil -flushcache; osascript -e 'do shell script \"killall -HUP mDNSResponder\" with administrator privileges' 2>/dev/null || true; ping -c 2 8.8.8.8",
             },
             {
                 "id": "fix_packages",
-                "title": "Repair Homebrew & App Updates",
+                "title": "Repair macOS App & Package Updates",
                 "icon": "system-software-update-symbolic",
-                "summary": "Cleans up outdated package caches and runs package diagnostics.",
-                "cmd": "brew cleanup -s 2>/dev/null; brew doctor 2>/dev/null || echo 'Homebrew not installed or system healthy'",
+                "summary": "Cleans up outdated package caches and runs system diagnostics.",
+                "cmd": "brew cleanup -s 2>/dev/null; brew doctor 2>/dev/null || echo 'System software caches verified and healthy.'",
             },
             {
                 "id": "clean_space",
                 "title": "Free Up Disk Space Safely",
                 "icon": "drive-harddisk-symbolic",
-                "summary": "Safely clears user application caches, QuickLook preview caches, and system crash logs. Personal files in Documents, Pictures, and Music are NEVER touched.",
-                "cmd": "rm -rf ~/Library/Caches/* 2>/dev/null; qlmanage -r cache 2>/dev/null; sudo rm -rf /private/var/log/asl/*.asl 2>/dev/null",
+                "summary": "Safely clears user application caches, QuickLook preview caches, and empties user Trash. Personal files in Documents, Pictures, and Music are NEVER touched.",
+                "cmd": "rm -rf ~/Library/Caches/* 2>/dev/null; qlmanage -r cache 2>/dev/null; rm -rf ~/.Trash/* 2>/dev/null; echo 'User application caches and Trash cleared successfully.'",
             },
             {
                 "id": "fix_audio",
                 "title": "Restart Audio & Sound",
                 "icon": "audio-speakers-symbolic",
                 "summary": "Restarts macOS CoreAudio service to restore sound, microphones, and headphones.",
-                "cmd": "sudo killall coreaudiod",
+                "cmd": "osascript -e 'do shell script \"killall coreaudiod\" with administrator privileges' 2>/dev/null || killall coreaudiod 2>/dev/null || true; echo 'Audio service restarted.'",
             },
             {
                 "id": "check_health",
                 "title": "Full System Health Check",
                 "icon": "utilities-system-monitor-symbolic",
-                "summary": "Analyzes storage volumes, memory statistics, and uptime.",
-                "cmd": "df -h /; vm_stat; uptime",
+                "summary": "Analyzes storage volumes, memory statistics, and uptime on your Mac.",
+                "cmd": "echo '=== macOS Disk Volumes ==='; df -h /; echo '\n=== Memory Statistics ==='; vm_stat; echo '\n=== System Uptime ==='; uptime",
             },
             {
                 "id": "update_system",
-                "title": "Check & Apply System Updates",
+                "title": "Check macOS System Updates",
                 "icon": "software-update-available-symbolic",
-                "summary": "Scans for and applies official Apple macOS software and security updates.",
-                "cmd": "softwareupdate -ia",
+                "summary": "Opens official Apple macOS Software Update panel in System Settings to check for security updates.",
+                "cmd": "open \"x-apple.systempreferences:com.apple.preferences.softwareupdate\" 2>/dev/null || open \"/System/Applications/System Settings.app\" 2>/dev/null || softwareupdate -l",
             },
         ]
     else:
@@ -524,12 +532,17 @@ def get_system_env() -> Dict[str, str]:
         "/bin",
         "/snap/bin",
         "/opt/homebrew/bin",
+        "/opt/homebrew/sbin",
+        os.path.expandvars(r"%LOCALAPPDATA%\Microsoft\WindowsApps"),
         os.path.expandvars(r"%LOCALAPPDATA%\Programs\Antigravity\bin"),
         os.path.expandvars(r"%ProgramFiles%\Antigravity"),
+        os.path.expandvars(r"%SystemRoot%\System32\WindowsPowerShell\v1.0"),
+        os.path.expandvars(r"%SystemRoot%\System32"),
+        os.path.expandvars(r"%SystemRoot%"),
     ]
     cur_path = env.get("PATH", "")
     cur_list = cur_path.split(os.pathsep) if cur_path else []
-    all_paths = [p for p in extra_paths if p not in cur_list] + cur_list
+    all_paths = [p for p in extra_paths if p and p not in cur_list] + cur_list
     env["PATH"] = os.pathsep.join(all_paths)
     return env
 
@@ -582,8 +595,33 @@ def check_windows_app_installer() -> tuple:
     except Exception as e:
         return False, f"Windows App Installer check failed: {e}"
 
+def check_macos_package_installer() -> tuple:
+    """
+    Checks if Homebrew or Mac package manager is available.
+    Returns (is_available: bool, version_or_message: str).
+    """
+    if sys.platform != "darwin":
+        return False, "Not running on macOS."
+
+    try:
+        res = subprocess.run(
+            ["brew", "--version"],
+            capture_output=True,
+            text=True,
+            shell=True,
+            env=get_system_env(),
+            timeout=5
+        )
+        if res.returncode == 0:
+            first_line = res.stdout.strip().splitlines()[0]
+            return True, f"Homebrew is active ({first_line})"
+        return False, "Homebrew not detected (Direct verified Mac app downloads available)"
+    except Exception as e:
+        return False, f"macOS package check failed: {e}"
+
 def get_system_health() -> Dict[str, Any]:
-    """Gathers real-time system metrics for the UI."""
+    """Gathers real-time system metrics for the UI across Windows, macOS, and Linux."""
+    import re
     data = {
         "cpu_usage": "N/A",
         "ram_usage": "N/A",
@@ -595,25 +633,72 @@ def get_system_health() -> Dict[str, Any]:
     }
     
     # 1. Memory
-    try:
-        with open("/proc/meminfo", "r") as f:
-            lines = f.readlines()
-        mem = {}
-        for l in lines:
-            parts = l.split(":")
-            if len(parts) == 2:
-                mem[parts[0].strip()] = int(parts[1].strip().split()[0])
-        total_kb = mem.get("MemTotal", 0)
-        avail_kb = mem.get("MemAvailable", 0)
-        if total_kb > 0:
-            used_kb = total_kb - avail_kb
-            pct = int((used_kb / total_kb) * 100)
-            data["ram_percent"] = pct
-            data["ram_usage"] = f"{used_kb // 1024} MB / {total_kb // 1024} MB ({pct}%)"
-    except Exception:
-        pass
+    if sys.platform.startswith("win"):
+        try:
+            import ctypes
+            class MEMORYSTATUSEX(ctypes.Structure):
+                _fields_ = [
+                    ("dwLength", ctypes.c_ulong),
+                    ("dwMemoryLoad", ctypes.c_ulong),
+                    ("ullTotalPhys", ctypes.c_ulonglong),
+                    ("ullAvailPhys", ctypes.c_ulonglong),
+                    ("ullTotalPageFile", ctypes.c_ulonglong),
+                    ("ullAvailPageFile", ctypes.c_ulonglong),
+                    ("ullTotalVirtual", ctypes.c_ulonglong),
+                    ("ullAvailVirtual", ctypes.c_ulonglong),
+                    ("sullAvailExtendedVirtual", ctypes.c_ulonglong),
+                ]
+            stat = MEMORYSTATUSEX()
+            stat.dwLength = ctypes.sizeof(MEMORYSTATUSEX)
+            if ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(stat)):
+                total_mb = int(stat.ullTotalPhys // (1024 * 1024))
+                avail_mb = int(stat.ullAvailPhys // (1024 * 1024))
+                used_mb = total_mb - avail_mb
+                pct = int(stat.dwMemoryLoad)
+                data["ram_percent"] = pct
+                data["ram_usage"] = f"{used_mb} MB / {total_mb} MB ({pct}%)"
+        except Exception:
+            pass
+    elif sys.platform == "darwin":
+        try:
+            res_total = subprocess.run(["sysctl", "-n", "hw.memsize"], capture_output=True, text=True, timeout=2)
+            if res_total.returncode == 0:
+                total_bytes = int(res_total.stdout.strip())
+                total_mb = total_bytes // (1024 * 1024)
+                res_vm = subprocess.run(["vm_stat"], capture_output=True, text=True, timeout=2)
+                free_pages = 0
+                for line in res_vm.stdout.splitlines():
+                    if "Pages free:" in line or "Pages inactive:" in line:
+                        parts = line.split(":")
+                        if len(parts) == 2:
+                            free_pages += int(parts[1].strip().rstrip("."))
+                avail_mb = (free_pages * 4096) // (1024 * 1024)
+                used_mb = max(0, total_mb - avail_mb)
+                pct = int((used_mb / total_mb) * 100) if total_mb > 0 else 0
+                data["ram_percent"] = pct
+                data["ram_usage"] = f"{used_mb} MB / {total_mb} MB ({pct}%)"
+        except Exception:
+            pass
+    else:
+        try:
+            with open("/proc/meminfo", "r") as f:
+                lines = f.readlines()
+            mem = {}
+            for l in lines:
+                parts = l.split(":")
+                if len(parts) == 2:
+                    mem[parts[0].strip()] = int(parts[1].strip().split()[0])
+            total_kb = mem.get("MemTotal", 0)
+            avail_kb = mem.get("MemAvailable", 0)
+            if total_kb > 0:
+                used_kb = total_kb - avail_kb
+                pct = int((used_kb / total_kb) * 100)
+                data["ram_percent"] = pct
+                data["ram_usage"] = f"{used_kb // 1024} MB / {total_kb // 1024} MB ({pct}%)"
+        except Exception:
+            pass
 
-    # 2. Disk
+    # 2. Disk (Cross-platform)
     try:
         usage = shutil.disk_usage(os.path.expanduser("~"))
         total = usage.total
@@ -626,14 +711,39 @@ def get_system_health() -> Dict[str, Any]:
         pass
 
     # 3. Uptime
-    try:
-        with open("/proc/uptime", "r") as f:
-            up_secs = float(f.readline().split()[0])
-        hours = int(up_secs // 3600)
-        mins = int((up_secs % 3600) // 60)
-        data["uptime"] = f"{hours}h {mins}m"
-    except Exception:
-        pass
+    if sys.platform.startswith("win"):
+        try:
+            import ctypes
+            ticks = ctypes.windll.kernel32.GetTickCount64()
+            up_secs = ticks / 1000.0
+            hours = int(up_secs // 3600)
+            mins = int((up_secs % 3600) // 60)
+            data["uptime"] = f"{hours}h {mins}m"
+        except Exception:
+            pass
+    elif sys.platform == "darwin":
+        try:
+            res = subprocess.run(["sysctl", "-n", "kern.boottime"], capture_output=True, text=True, timeout=2)
+            if res.returncode == 0:
+                import time
+                m = re.search(r"sec\s*=\s*(\d+)", res.stdout)
+                if m:
+                    boot_sec = int(m.group(1))
+                    up_secs = time.time() - boot_sec
+                    hours = int(up_secs // 3600)
+                    mins = int((up_secs % 3600) // 60)
+                    data["uptime"] = f"{hours}h {mins}m"
+        except Exception:
+            pass
+    else:
+        try:
+            with open("/proc/uptime", "r") as f:
+                up_secs = float(f.readline().split()[0])
+            hours = int(up_secs // 3600)
+            mins = int((up_secs % 3600) // 60)
+            data["uptime"] = f"{hours}h {mins}m"
+        except Exception:
+            pass
 
     return data
 

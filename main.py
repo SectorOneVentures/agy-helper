@@ -11,7 +11,8 @@ import threading
 import argparse
 import json
 
-os.environ["GDK_BACKEND"] = "x11"
+if sys.platform.startswith("linux"):
+    os.environ.setdefault("GDK_BACKEND", "x11")
 
 # Enrich PATH so all child processes and subprocesses can find agy and system tools
 extra_paths = [
@@ -25,11 +26,17 @@ extra_paths = [
     "/sbin",
     "/bin",
     "/snap/bin",
+    "/opt/homebrew/bin",
+    "/opt/homebrew/sbin",
+    os.path.expandvars(r"%LOCALAPPDATA%\Microsoft\WindowsApps"),
+    os.path.expandvars(r"%ProgramFiles%\Antigravity"),
+    os.path.expandvars(r"%LOCALAPPDATA%\Programs\Antigravity\bin"),
+    os.path.expandvars(r"%SystemRoot%\System32\WindowsPowerShell\v1.0"),
 ]
 cur_path = os.environ.get("PATH", "")
-cur_list = cur_path.split(":") if cur_path else []
-all_paths = [p for p in extra_paths if p not in cur_list] + cur_list
-os.environ["PATH"] = ":".join(all_paths)
+cur_list = cur_path.split(os.pathsep) if cur_path else []
+all_paths = [p for p in extra_paths if p and p not in cur_list] + cur_list
+os.environ["PATH"] = os.pathsep.join(all_paths)
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -39,7 +46,13 @@ from styles import apply_theme, get_current_theme
 from companion_widget import CompanionWidget
 from assistant_window import AssistantWindow
 
-SOCKET_PATH = f"/tmp/agy_helper_{os.getuid()}.sock"
+if sys.platform.startswith("win"):
+    import tempfile
+    username = os.environ.get("USERNAME", "user")
+    SOCKET_PATH = os.path.join(tempfile.gettempdir(), f"agy_helper_{username}.sock")
+else:
+    uid = getattr(os, "getuid", lambda: 1000)()
+    SOCKET_PATH = f"/tmp/agy_helper_{uid}.sock"
 CONFIG_DIR = os.path.expanduser("~/.config/agy-helper")
 CONFIG_FILE = os.path.join(CONFIG_DIR, "config.json")
 
@@ -85,6 +98,9 @@ class AgyHelperApp:
         return "light"
 
     def _start_ipc_server(self):
+        if not hasattr(socket, "AF_UNIX"):
+            return
+
         if os.path.exists(SOCKET_PATH):
             try:
                 os.remove(SOCKET_PATH)
@@ -126,7 +142,7 @@ class AgyHelperApp:
 
 def send_ipc_command(cmd_str: str) -> bool:
     """Send command to existing instance if running. Returns True if handled."""
-    if not os.path.exists(SOCKET_PATH):
+    if not hasattr(socket, "AF_UNIX") or not os.path.exists(SOCKET_PATH):
         return False
     try:
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)

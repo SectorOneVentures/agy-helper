@@ -12,6 +12,8 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('GdkPixbuf', '2.0')
 from gi.repository import Gtk, Gdk, GLib, GdkPixbuf, Pango
 
+import sys
+import subprocess
 import webbrowser
 from safety_engine import check_command_safety, get_protected_paths_summary
 from agy_client import AgyClient, DEFAULT_MODEL, DEFAULT_EFFORT, check_agy_connection, auto_connect_agy
@@ -21,6 +23,7 @@ from system_tools import (
     QUICK_FIXES,
     check_app_installed,
     check_windows_app_installer,
+    check_macos_package_installer,
     get_system_health,
     run_command_safe_async,
     launch_app_async,
@@ -365,10 +368,17 @@ class AssistantWindow(Gtk.Window):
         return vbox
 
     def _add_welcome_chat(self):
+        if sys.platform.startswith("win"):
+            os_line = "• You don't need to know anything about Windows settings, registries, or technical commands.\n"
+        elif sys.platform == "darwin":
+            os_line = "• You don't need to know anything about Terminal or complex Mac settings.\n"
+        else:
+            os_line = "• You don't need to know anything about Linux or technical commands.\n"
+
         welcome_text = (
             "👋 **Hi there! I'm Agy, your friendly desktop companion.**\n\n"
             "I'm here to make using your computer easy, stress-free, and fun!\n\n"
-            "• You don't need to know anything about Linux or technical commands.\n"
+            f"{os_line}"
             "• Just type what you'd like to do or ask a question in plain English.\n"
             "• **Safety Promise:** Your personal **Documents, Music, and Pictures** are 100% shielded and will **never** be deleted.\n\n"
             "How can I help you today?"
@@ -587,7 +597,13 @@ class AssistantWindow(Gtk.Window):
         vbox.set_margin_top(16)
         vbox.set_margin_bottom(16)
 
-        lbl_desc = Gtk.Label(label="Common 1-click repairs and optimizations. All actions are verified safe.")
+        if sys.platform.startswith("win"):
+            fix_desc = "Common Windows 1-click repairs and optimizations. All actions are verified safe."
+        elif sys.platform == "darwin":
+            fix_desc = "Common macOS 1-click repairs and optimizations. All actions are verified safe."
+        else:
+            fix_desc = "Common 1-click repairs and optimizations. All actions are verified safe."
+        lbl_desc = Gtk.Label(label=fix_desc)
         lbl_desc.get_style_context().add_class("header-subtitle")
         lbl_desc.set_xalign(0)
         vbox.pack_start(lbl_desc, False, False, 0)
@@ -712,6 +728,37 @@ class AssistantWindow(Gtk.Window):
             win_banner.pack_end(btn_help_installer, False, False, 0)
 
             vbox.pack_start(win_banner, False, False, 0)
+
+        # macOS-specific Mac App Store & Homebrew banner
+        elif sys.platform == "darwin":
+            mac_banner = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=14)
+            mac_banner.get_style_context().add_class("ios-card")
+
+            icon_store = Gtk.Label()
+            icon_store.set_markup("<span font='24'>🍎</span>")
+            mac_banner.pack_start(icon_store, False, False, 4)
+
+            banner_text_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
+            lbl_banner_title = Gtk.Label()
+            lbl_banner_title.set_markup("<b>Verified macOS Applications &amp; Mac App Store</b>")
+            lbl_banner_title.set_xalign(0)
+            lbl_banner_desc = Gtk.Label(
+                label="Applications are installed safely through Mac App Store links, official packages, and verified Homebrew formulas. 100% verified, clean software with zero adware or deceptive popups."
+            )
+            lbl_banner_desc.set_line_wrap(True)
+            lbl_banner_desc.set_xalign(0)
+            lbl_banner_desc.get_style_context().add_class("header-subtitle")
+            banner_text_box.pack_start(lbl_banner_title, False, False, 0)
+            banner_text_box.pack_start(lbl_banner_desc, False, False, 0)
+            mac_banner.pack_start(banner_text_box, True, True, 0)
+
+            btn_help_installer = Gtk.Button(label="ℹ️ Help with Mac Apps")
+            btn_help_installer.set_valign(Gtk.Align.CENTER)
+            btn_help_installer.get_style_context().add_class("ios-btn-secondary")
+            btn_help_installer.connect("clicked", lambda b: self._show_macos_installer_help())
+            mac_banner.pack_end(btn_help_installer, False, False, 0)
+
+            vbox.pack_start(mac_banner, False, False, 0)
 
         self.app_buttons = {}
 
@@ -867,6 +914,116 @@ class AssistantWindow(Gtk.Window):
         dialog.connect("response", lambda d, r: d.destroy())
         dialog.show_all()
 
+    def _show_macos_installer_help(self):
+        """Displays friendly guidance and quick links for macOS applications & Mac App Store."""
+        dialog = Gtk.Dialog(
+            title="Help with Mac Applications",
+            parent=self,
+            flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT
+        )
+        dialog.set_default_size(560, 480)
+        content = dialog.get_content_area()
+        content.set_spacing(16)
+        content.set_margin_start(24)
+        content.set_margin_end(24)
+        content.set_margin_top(20)
+        content.set_margin_bottom(20)
+
+        # Header card
+        head_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=14)
+        head_box.get_style_context().add_class("ios-card")
+        icon_lbl = Gtk.Label()
+        icon_lbl.set_markup("<span font='28'>🍎</span>")
+        head_box.pack_start(icon_lbl, False, False, 4)
+
+        head_text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        title = Gtk.Label()
+        title.set_markup("<b>Mac App Store &amp; Verified Mac Applications</b>")
+        title.set_xalign(0)
+        subtitle = Gtk.Label(
+            label="How Agy Helper safely installs genuine macOS applications directly from official developers and the Mac App Store without browser popups or deceptive download sites."
+        )
+        subtitle.set_line_wrap(True)
+        subtitle.set_xalign(0)
+        subtitle.get_style_context().add_class("header-subtitle")
+        head_text.pack_start(title, False, False, 0)
+        head_text.pack_start(subtitle, False, False, 0)
+        head_box.pack_start(head_text, True, True, 0)
+        content.pack_start(head_box, False, False, 0)
+
+        # Explanation Card
+        info_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        info_box.get_style_context().add_class("ios-card")
+
+        step1_title = Gtk.Label()
+        step1_title.set_markup("<b>🍎 Mac App Store &amp; Homebrew Management</b>")
+        step1_title.set_xalign(0)
+        step1_desc = Gtk.Label(
+            label="Agy Helper connects to verified Mac software channels and Homebrew package management to install genuine macOS apps. You never need to search online or risk clicking dangerous fake download links."
+        )
+        step1_desc.set_line_wrap(True)
+        step1_desc.set_xalign(0)
+        info_box.pack_start(step1_title, False, False, 0)
+        info_box.pack_start(step1_desc, False, False, 0)
+
+        step2_title = Gtk.Label()
+        step2_title.set_markup("<b>❓ What if an app won't install?</b>")
+        step2_title.set_xalign(0)
+        step2_desc = Gtk.Label(
+            label="If an installation doesn't start, your Mac may need Homebrew or you can install directly via the Mac App Store. Click the buttons below to open the Mac App Store or learn more about Homebrew."
+        )
+        step2_desc.set_line_wrap(True)
+        step2_desc.set_xalign(0)
+        info_box.pack_start(step2_title, False, False, 0)
+        info_box.pack_start(step2_desc, False, False, 0)
+
+        content.pack_start(info_box, False, False, 0)
+
+        # Action Buttons
+        btn_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+
+        btn_store = Gtk.Button(label="🍎 Open Mac App Store")
+        btn_store.get_style_context().add_class("ios-btn-primary")
+        def _open_mac_store(b):
+            try:
+                subprocess.Popen(["open", "-a", "App Store"])
+            except Exception:
+                webbrowser.open("https://apps.apple.com/us/genre/mac")
+        btn_store.connect("clicked", _open_mac_store)
+        btn_box.pack_start(btn_store, True, True, 0)
+
+        btn_brew = Gtk.Button(label="🌐 Homebrew Website")
+        btn_brew.get_style_context().add_class("ios-btn-secondary")
+        btn_brew.connect("clicked", lambda b: webbrowser.open("https://brew.sh"))
+        btn_box.pack_start(btn_brew, True, True, 0)
+
+        content.pack_start(btn_box, False, False, 0)
+
+        # Status check
+        status_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        lbl_status = Gtk.Label(label="Checking macOS package manager status...")
+        lbl_status.set_xalign(0)
+        status_box.pack_start(lbl_status, True, True, 0)
+
+        btn_check = Gtk.Button(label="🔄 Test Package Status")
+        btn_check.get_style_context().add_class("ios-btn-secondary")
+        def _test_mac_installer(b):
+            avail, msg = check_macos_package_installer()
+            if avail:
+                lbl_status.set_markup(f"<span color='#107C41'><b>🟢 {msg}</b></span>")
+            else:
+                lbl_status.set_markup(f"<span color='#0078D4'><b>ℹ️ {msg}</b></span>")
+        btn_check.connect("clicked", _test_mac_installer)
+        status_box.pack_end(btn_check, False, False, 0)
+        content.pack_start(status_box, False, False, 0)
+
+        # Initial test check
+        GLib.idle_add(lambda: _test_mac_installer(None))
+
+        dialog.add_button("Close", Gtk.ResponseType.CLOSE)
+        dialog.connect("response", lambda d, r: d.destroy())
+        dialog.show_all()
+
     def _install_app(self, app_info: dict, btn_widget: Gtk.Button):
         btn_widget.set_sensitive(False)
         btn_widget.set_label("Installing...")
@@ -893,6 +1050,11 @@ class AssistantWindow(Gtk.Window):
                 if sys.platform.startswith("win"):
                     self._add_message_bubble(
                         f"⚠️ **Note on installing {app['name']}:** If the install didn't complete, Windows App Installer may need a quick update from the Microsoft Store. Click **Help with App Installer** in the App tab to update it.",
+                        is_user=False
+                    )
+                elif sys.platform == "darwin":
+                    self._add_message_bubble(
+                        f"⚠️ **Note on installing {app['name']}:** If the install didn't complete, Homebrew may need to be installed or you can install directly via the Mac App Store. Click **Help with Mac Apps** in the App tab.",
                         is_user=False
                     )
 
@@ -1241,11 +1403,21 @@ class AssistantWindow(Gtk.Window):
         c2_title.set_xalign(0)
         c2.pack_start(c2_title, False, False, 0)
 
+        if sys.platform.startswith("win"):
+            os_name_str = "your Windows version"
+            folder_shield_str = "Documents, Pictures, Music, and OneDrive directories"
+        elif sys.platform == "darwin":
+            os_name_str = "your macOS version"
+            folder_shield_str = "Documents, Pictures, and Music directories"
+        else:
+            os_name_str = "your Linux OS version"
+            folder_shield_str = "~/Documents, ~/Pictures, and ~/Music directories"
+
         c2_desc = Gtk.Label(
-            label="• Friendly Tech Support Engine: Agy Helper connects to Google Gemini models (Gemini 3.7 Flash) using your local Google AGY engine to provide instant, patient, plain-English troubleshooting answers.\n"
-                  "• What is Sent: Only the technical question or message you type in the 'Ask Agy' chat box (and basic non-sensitive system environment details, such as your Linux OS version) is transmitted to Google's Gemini API to formulate an accurate answer.\n"
-                  "• What is NEVER Sent: Agy Helper NEVER transmits or inspects your personal documents, family photos, music, passwords, browser logins, or keystrokes. Your personal files remain strictly on your computer.\n"
-                  "• Encrypted Communication: All communication with Google Gemini is encrypted in transit over standard TLS/HTTPS."
+            label=f"• Friendly Tech Support Engine: Agy Helper connects to Google Gemini models (Gemini 3.7 Flash) using your local Google AGY engine to provide instant, patient, plain-English troubleshooting answers.\n"
+                  f"• What is Sent: Only the technical question or message you type in the 'Ask Agy' chat box (and basic non-sensitive system environment details, such as {os_name_str}) is transmitted to Google's Gemini API to formulate an accurate answer.\n"
+                  f"• What is NEVER Sent: Agy Helper NEVER transmits or inspects your personal documents, family photos, music, passwords, browser logins, or keystrokes. Your personal files remain strictly on your computer.\n"
+                  f"• Encrypted Communication: All communication with Google Gemini is encrypted in transit over standard TLS/HTTPS."
         )
         c2_desc.set_line_wrap(True)
         c2_desc.set_xalign(0)
@@ -1262,9 +1434,9 @@ class AssistantWindow(Gtk.Window):
         c3.pack_start(c3_title, False, False, 0)
 
         c3_desc = Gtk.Label(
-            label="• Protected Personal Folders: Hardcoded safety rules strictly prevent deleting or altering files in your ~/Documents, ~/Pictures, and ~/Music directories.\n"
-                  "• Explicit User Confirmation: No system changes or fixes are ever applied in the background without your explicit consent or button click.\n"
-                  "• Full Transparency: You can expand and review the exact commands before any safe action is performed."
+            label=f"• Protected Personal Folders: Hardcoded safety rules strictly prevent deleting or altering files in your {folder_shield_str}.\n"
+                  f"• Explicit User Confirmation: No system changes or fixes are ever applied in the background without your explicit consent or button click.\n"
+                  f"• Full Transparency: You can expand and review the exact commands before any safe action is performed."
         )
         c3_desc.set_line_wrap(True)
         c3_desc.set_xalign(0)
@@ -1513,12 +1685,15 @@ class AssistantWindow(Gtk.Window):
         """Safely closes all active web browsers in case of a locked scam popup."""
         if sys.platform.startswith("win"):
             cmd = 'taskkill /F /IM chrome.exe /IM msedge.exe /IM firefox.exe /IM brave.exe 2>nul || true'
+            b_names = "Microsoft Edge, Chrome, Firefox, and Brave"
         elif sys.platform == "darwin":
             cmd = "killall -9 'Google Chrome' 'Firefox' 'Brave Browser' 'Safari' 'Microsoft Edge' 2>/dev/null || true"
+            b_names = "Safari, Chrome, Firefox, and Brave"
         else:
             cmd = "killall chrome chrome-sandbox firefox brave-browser msedge 2>/dev/null || true"
+            b_names = "web browser windows"
         self._execute_safe_task(cmd, None)
-        self._add_message_bubble("🛑 **Closed all web browser windows.** Any fake scam popups have been safely dismissed.", is_user=False)
+        self._add_message_bubble(f"🛑 **Closed all active {b_names}.** Any fake scam popups have been safely dismissed.", is_user=False)
         self.select_tab("chat")
 
     # -------------------------------------------------------------
@@ -1559,7 +1734,13 @@ class AssistantWindow(Gtk.Window):
             icon_sh = Gtk.Image.new_from_icon_name("security-high-symbolic", Gtk.IconSize.MENU)
             row.pack_start(icon_sh, False, False, 0)
 
-            l_name = Gtk.Label(label=f"📁 ~/{p_info['name']}")
+            folder_display = p_info["name"]
+            if "OneDrive" in p_info.get("path", ""):
+                folder_display = f"OneDrive / {folder_display}"
+            elif not sys.platform.startswith("win"):
+                folder_display = f"~/{folder_display}"
+
+            l_name = Gtk.Label(label=f"📁 {folder_display}")
             l_name.get_style_context().add_class("header-title")
             row.pack_start(l_name, False, False, 0)
 
@@ -1609,11 +1790,17 @@ class AssistantWindow(Gtk.Window):
         lbl_set_head.set_xalign(0)
         settings_card.pack_start(lbl_set_head, False, False, 0)
 
+        if sys.platform.startswith("win"):
+            autostart_desc = "• Autostart: Configured for Windows Startup\n• App Shortcut: Available in Windows Start Menu & Desktop"
+        elif sys.platform == "darwin":
+            autostart_desc = "• Autostart: Configured for macOS Login\n• Dock Icon: Available in Applications & macOS Dock"
+        else:
+            autostart_desc = "• Autostart: Enabled on startup (~/.config/autostart)\n• Dock Icon: Installed & pinned in GNOME Favorites"
+
         lbl_set_info = Gtk.Label(
             label=f"• Model: {DEFAULT_MODEL} (Effort: {DEFAULT_EFFORT})\n"
                   f"• Token Saver: Active (History pruning enabled to prevent overages)\n"
-                  f"• Autostart: Enabled on startup (~/.config/autostart)\n"
-                  f"• Dock Icon: Installed &amp; pinned in GNOME Favorites"
+                  f"{autostart_desc}"
         )
         lbl_set_info.set_line_wrap(True)
         lbl_set_info.set_xalign(0)
@@ -1674,7 +1861,13 @@ class AssistantWindow(Gtk.Window):
 
         header_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         lbl = Gtk.Label()
-        lbl.set_markup("<b>Activity Terminal Log</b>")
+        if sys.platform.startswith("win"):
+            drawer_title = "<b>Windows Activity &amp; Action Log</b>"
+        elif sys.platform == "darwin":
+            drawer_title = "<b>macOS Activity &amp; Action Log</b>"
+        else:
+            drawer_title = "<b>Activity Terminal Log</b>"
+        lbl.set_markup(drawer_title)
         header_row.pack_start(lbl, False, False, 0)
 
         btn_close = Gtk.Button(label="Hide Log ✕")
@@ -1722,9 +1915,12 @@ class AssistantWindow(Gtk.Window):
                 if on_finish_callback:
                     on_finish_callback(ret_code == 0)
                 if ret_code == 0:
-                    self._add_message_bubble(f"✅ **Task finished successfully!**\n`{cmd_str}`", is_user=False)
+                    clean_display = cmd_str
+                    if len(clean_display) > 80:
+                        clean_display = clean_display[:77] + "..."
+                    self._add_message_bubble(f"✅ **Task finished successfully!**\n`{clean_display}`", is_user=False)
                 else:
-                    self._add_message_bubble(f"⚠️ **Task completed with status code {ret_code}**.\nCheck the activity log for details.", is_user=False)
+                    self._add_message_bubble(f"⚠️ **Task completed with status code {ret_code}**.\nCheck the activity log below for details.", is_user=False)
             GLib.idle_add(_finish)
 
         run_command_safe_async(cmd_str, on_output, on_complete)

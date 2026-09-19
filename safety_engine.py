@@ -28,6 +28,17 @@ PROTECTED_MEDIA_DIRS = [
     os.path.realpath(os.path.expanduser("~/Desktop")),
 ]
 
+# On Windows, protect OneDrive redirected folders if present
+for od_var in ["OneDrive", "OneDriveConsumer", "OneDriveCommercial"]:
+    od_path = os.environ.get(od_var)
+    if od_path and os.path.isdir(od_path):
+        for sub in ["Documents", "Pictures", "Music", "Desktop"]:
+            sub_path = os.path.join(od_path, sub)
+            if os.path.isdir(sub_path):
+                r_path = os.path.realpath(sub_path)
+                if r_path not in PROTECTED_MEDIA_DIRS:
+                    PROTECTED_MEDIA_DIRS.append(r_path)
+
 # Critical system directories that must not be destructively altered
 CRITICAL_SYSTEM_DIRS = [
     "/boot",
@@ -49,6 +60,8 @@ CRITICAL_SYSTEM_DIRS = [
     "/System",
     "/Library",
     os.environ.get("SystemRoot", "C:\\Windows"),
+    os.environ.get("ProgramFiles", "C:\\Program Files"),
+    os.environ.get("ProgramFiles(x86)", "C:\\Program Files (x86)"),
 ]
 
 # Deletion command patterns (Linux, macOS, Windows)
@@ -80,8 +93,9 @@ DANGEROUS_SYSTEM_PATTERNS = [
     # Windows destructive patterns
     r"\bformat\s+[a-zA-Z]:",
     r"\bdiskpart\b",
-    r"\brd\s+/[sq]\s+[a-zA-Z]:\\",
-    r"\bdel\s+/[sfq]+\s+[a-zA-Z]:\\",
+    r"\b(rd|rmdir)\s+.*[a-zA-Z]:\\",
+    r"\bdel\s+.*[a-zA-Z]:\\",
+    r"\b(Remove-Item|ri)\b.*[a-zA-Z]:\\",
 ]
 
 def is_path_under_dir(target_path: str, parent_dir: str) -> bool:
@@ -132,14 +146,14 @@ def check_command_safety(cmd_str: str) -> Tuple[bool, str, Dict[str, Any]]:
         if not tokens:
             continue
 
-        cmd_name = os.path.basename(tokens[0])
+        cmd_name = os.path.basename(tokens[0]).lower()
 
         # Check if this sub-command is a deletion tool
         if cmd_name in DELETION_COMMANDS:
             # Inspect all arguments
             for arg in tokens[1:]:
-                # Ignore options like -r, -f, --force, -rf
-                if arg.startswith("-"):
+                # Ignore options like -r, -f, --force, -rf or Windows switches like /s, /q, /f
+                if arg.startswith("-") or (arg.startswith("/") and len(arg) <= 3 and ":" not in arg):
                     continue
 
                 # Expand target path
